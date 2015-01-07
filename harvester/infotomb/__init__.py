@@ -10,12 +10,12 @@ def get_content(url):
     response = requests.get(url)
     if response.status_code != 200:
         return
-    m = re.match('^.*/([0-9a-zA-Z]+)((\.[a-zA-Z]+)*)$',url)
+    m = re.match('^.*/([0-9a-zA-Z]+)((\.[a-zA-Z0-9]+)*)$',url)
     if not m.group(2):
         data = response.text
         soup = BeautifulSoup(data)
         url = soup.find_all('input')[2]['value']
-        m = re.match('^.*/([0-9a-zA-Z]+)((\.[a-zA-Z]+)*)$',url)
+        m = re.match('^.*/([0-9a-zA-Z]+)((\.[a-zA-Z0-9]+)*)$',url)
         if m:
             response = requests.get(url)
             if response.status_code != 200:
