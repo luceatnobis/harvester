@@ -1,0 +1,4 @@
+.*swp
+*pyc
+harvester.db
+**/__pycache__
