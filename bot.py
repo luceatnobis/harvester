@@ -37,6 +37,7 @@ class brotherBot:
     def __init__(self, bot):
         self.bot = bot
 
+    #TODO: gyazo, 
     #NOTE: https://irc3.readthedocs.org/en/latest/rfc.html
     @irc3.event(irc3.rfc.PRIVMSG)
     def privmsg_trigger(self, mask=None, event=None, target=None, data=None):

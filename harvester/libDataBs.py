@@ -1,9 +1,13 @@
+import os
 import sqlite3
 
 #Simple sqlite wrapper
 #Should be used with 'with' keyword to ensure proper initialization and closure of database
 class DataBs:
     def __init__(self):
+        archive_dir = os.environ['HOME'] + os.sep + "archive"
+        archive_json = archive_dir + os.sep + "archive.json"
+
         self.db = sqlite3.connect('harvester.db')
         self.curse = self.db.cursor()
         self.curse.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='harvs'")
