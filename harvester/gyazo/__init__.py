@@ -21,7 +21,7 @@ def get_content(url):
     if response.status_code != 200:
         return
 
-    paste_info['ext'] = ""
+    paste_info['ext'] = "png"
     paste_info['orig_filename'] = img_id
     paste_info['content'] = response.content
     return paste_info

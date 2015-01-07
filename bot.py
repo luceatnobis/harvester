@@ -63,7 +63,7 @@ class brotherBot:
 
         timestamp = str(int(time.time() * 1000))
         paste_regex_to_func = {
-            '^https?://pastebin\.com/[^ ]+': pastebin.get_content,
+                '^https?://pastebin\.com/(raw\.php\?i=)?[a-zA-Z0-9]+': pastebin.get_content,
             '^https?://p\.pomf\.se/[\d.]+': ppomf.get_content,
             '^https?://(?:infotomb\.com|itmb\.co)/[0-9a-zA-Z.]+': infotomb.get_content,
             '^https?://prntscr\.com/[0-9a-zA-Z]+': prntscrn.get_content,
@@ -95,24 +95,17 @@ class brotherBot:
 
         if not os.path.exists(final_folder):
             os.makedirs(final_folder)
-
         filename = str(timestamp) + "_" + paste_data['orig_filename']
         filename += ".%s" % paste_data['ext'] if paste_data['ext'] else ""
 
         file_location = final_folder + os.sep + filename
         paste_data['location'] = file_location
         
-        #NOTE: THIS CODE EXISTS BECAUSE OF DEBUGGING PURPOSES
-        with open(file_location, 'wb') as f:
-            f.write(paste_data['content'])
-
         with libDataBs.DataBs() as db:
             if not db.check(paste_data['md5']):
                 #NOTE: THIS IS COMMENTED OUT FOR DEBUGGING PURPOSES
-                """
                 with open(file_location, 'wb') as f:
                     f.write(paste_data['content'])
-                """
                 db.set({'hash': paste_data['md5'], 'filename': filename, 'count': 1})
             else:
                 #TODO add actions to take if file already in archive

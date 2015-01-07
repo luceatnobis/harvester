@@ -8,7 +8,7 @@ class DataBs:
         archive_dir = os.environ['HOME'] + os.sep + "archive"
         archive_json = archive_dir + os.sep + "archive.json"
 
-        self.db = sqlite3.connect('harvester/harvester.db')
+        self.db = sqlite3.connect('harvester.db')
         self.curse = self.db.cursor()
         self.curse.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='harvs'")
         if not self.curse.fetchone():
