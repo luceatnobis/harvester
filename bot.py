@@ -38,9 +38,6 @@ class brotherBot:
     def __init__(self, bot):
         self.bot = bot
 
-    # nickserv handler
-    @irc3.event(r':(?P<ns>NickServ)!NickServ@services. NOTICE (?P<nick>irc3) :'
-                        r'This nickname is registered.*')
     #NOTE: https://irc3.readthedocs.org/en/latest/rfc.html
     @irc3.event(irc3.rfc.PRIVMSG)
     def privmsg_trigger(self, mask=None, event=None, target=None, data=None):
@@ -112,6 +109,7 @@ class brotherBot:
             else:
                 db.upCount(paste_data['md5'])
         del paste_data['content']
+        print(paste_data)
 
         #obscure way to ensure that we always have a file to read from/to
         open(archive_json, 'a').close()
@@ -144,6 +142,7 @@ def main():
             __name__,
         ]
     )
+    bot.include('irc3.plugins.log')
     bot.run()
 
 main()
