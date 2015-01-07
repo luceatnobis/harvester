@@ -35,11 +35,11 @@ class DataBs:
                 VALUES(:hash,:filename, :count)''', dct)
             return True
 
-    def upCount(self,hash,count):
+    def upCount(self,hash):
         if not self.check(hash):
             return False
         else:
-            self.curse.execute("UPDATE harvs SET count=? WHERE hash = ?", [count,hash])
+            self.curse.execute("UPDATE harvs SET count= count + 1 WHERE hash = ?", [hash])
             return True
     def gibData(self,hash):
         if not self.check(hash):

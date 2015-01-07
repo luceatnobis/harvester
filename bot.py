@@ -69,7 +69,7 @@ class brotherBot:
             # dpaste doesnt get along with https, so we're not gonna bother
             '^http://dpaste\.com/[0-9a-zA-Z]+': dpaste.get_content,
             '^https?://bpaste\.net/(raw|show)/[0-9a-zA-Z]+': bpaste.get_content,
-            '^https?://hastebin\.com/.+': hastebin.get_content,
+            '^https?://hastebin\.com/(raw/[a-z]+)|([a-z]+\.hs)': hastebin.get_content,
 
             # here come the image hosters
             '^https?://(i\.)?cubeupload\.com/(im/)?[a-zA-Z0-9.]+': cubeupload.get_content,
@@ -101,14 +101,15 @@ class brotherBot:
         paste_data['location'] = file_location
         
         with libDataBs.DataBs() as db:
+            print(db.gibData(paste_data['md5']))
             if not db.check(paste_data['md5']):
                 with open(file_location, 'wb') as f:
                     f.write(paste_data['content'])
                 db.set({'hash': paste_data['md5'], 'filename': filename, 'count': 1})
             else:
-                #TODO add actions to take if file already in archive
-                pass
+                db.upCount(paste_data['md5'])
         del paste_data['content']
+
         open(archive_json, 'a').close() #really obscure way to ensure that we always have a file to read from/to
         with open(archive_json, "r") as fj:
             try:
