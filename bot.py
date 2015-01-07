@@ -19,7 +19,7 @@ from harvester import prntscrn
 from harvester import hastebin
 from harvester import pastebin
 from harvester import cubeupload
-
+from harvester import DataBs
 
 @irc3.plugin
 class brotherBot:
@@ -55,9 +55,8 @@ class brotherBot:
         timestamp = str(int(time.time() * 1000))
         paste_regex_to_func = {
             '^.*https?://pastebin\.com/[^ ]+': pastebin.get_content,
-            '^.*https?://p\.pomf\.se/\d+': ppomf.get_content,
-            # TODO: add infotomb short link
-            '^.*https?://infotomb\.com/[0-9a-zA-Z]+': infotomb.get_content,
+            '^.*https?://p\.pomf\.se/[\d.]+': ppomf.get_content,
+            '^.*https?://(?:infotomb\.com|itmb\.co)/[0-9a-zA-Z.]+': infotomb.get_content,
             '^.*https?://prntscr\.com/[0-9a-zA-Z]+': prntscrn.get_content,
             # dpaste doesnt get along with https, so we're not gonna bother
             '^.*http://dpaste\.com/[0-9a-zA-Z]+': dpaste.get_content,
@@ -65,8 +64,8 @@ class brotherBot:
             '^.*https?://hastebin\.com/.+': hastebin.get_content,
 
             # here come the image hosters
-            '^.*https?://(i\.)?cubeupload\.com/(im/)?[a-zA-Z0-9]+': cubeupload.get_content,
-            '^.*https?://(i\.)?imgur\.com/(gallery/)?[a-zA-Z0-9]+': imgur.get_content,
+            '^.*https?://(i\.)?cubeupload\.com/(im/)?[a-zA-Z0-9.]+': cubeupload.get_content,
+            '^.*https?://(i\.)?imgur\.com/(gallery/)?[a-zA-Z0-9.]+': imgur.get_content,
             '^.*https?://(cache\.|i\.)?gyazo.com/[a-z0-9]{32}(\.png)?': gyazo.get_content
         }
         for regex, func in paste_regex_to_func.items():
@@ -91,10 +90,15 @@ class brotherBot:
 
         file_location = final_folder + os.sep + filename
         paste_data['location'] = file_location
-
-        with open(file_location, 'wb') as f:
-            f.write(paste_data['content'])
-
+        
+        with DataBs() as db:
+            if not db.check(paste_data['md5']):
+                with open(file_location, 'wb') as f:
+                    f.write(paste_data['content'])
+                db.set({'hash': paste_data['md5'], 'filename': filename, 'count': 1})
+            else:
+                #TODO add actions to take if file already in archive
+                pass
         del paste_data['content']
 
         with open(archive_json, "a+") as fj:
