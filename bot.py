@@ -46,7 +46,16 @@ class brotherBot:
             return
 
         nick, user, host = self.split_mask(mask)
-        content = self.harvest(nick, data)
+        url = self.urlReg(data)
+        if url:
+            print(url)
+            content = self.harvest(nick, url)
+    
+    def urlReg(self,msg):
+        m = re.match('^.*(https?://(-\.)?([^\s/?\.#-]+\.?)+(/[^\s]*)?)',msg)
+        if m:
+            return m.group(1)
+        return
 
     def harvest(self, nick, msg):
         archive_dir = os.environ['HOME'] + os.sep + "archive"
@@ -54,24 +63,25 @@ class brotherBot:
 
         timestamp = str(int(time.time() * 1000))
         paste_regex_to_func = {
-            '^.*https?://pastebin\.com/[^ ]+': pastebin.get_content,
-            '^.*https?://p\.pomf\.se/[\d.]+': ppomf.get_content,
-            '^.*https?://(?:infotomb\.com|itmb\.co)/[0-9a-zA-Z.]+': infotomb.get_content,
-            '^.*https?://prntscr\.com/[0-9a-zA-Z]+': prntscrn.get_content,
+            '^https?://pastebin\.com/[^ ]+': pastebin.get_content,
+            '^https?://p\.pomf\.se/[\d.]+': ppomf.get_content,
+            '^https?://(?:infotomb\.com|itmb\.co)/[0-9a-zA-Z.]+': infotomb.get_content,
+            '^https?://prntscr\.com/[0-9a-zA-Z]+': prntscrn.get_content,
             # dpaste doesnt get along with https, so we're not gonna bother
-            '^.*http://dpaste\.com/[0-9a-zA-Z]+': dpaste.get_content,
-            '^.*https?://bpaste\.net/(raw|show)/[0-9a-zA-Z]+': bpaste.get_content,
-            '^.*https?://hastebin\.com/.+': hastebin.get_content,
+            '^http://dpaste\.com/[0-9a-zA-Z]+': dpaste.get_content,
+            '^https?://bpaste\.net/(raw|show)/[0-9a-zA-Z]+': bpaste.get_content,
+            '^https?://hastebin\.com/.+': hastebin.get_content,
 
             # here come the image hosters
-            '^.*https?://(i\.)?cubeupload\.com/(im/)?[a-zA-Z0-9.]+': cubeupload.get_content,
-            '^.*https?://(i\.)?imgur\.com/(gallery/)?[a-zA-Z0-9.]+': imgur.get_content,
-            '^.*https?://(cache\.|i\.)?gyazo.com/[a-z0-9]{32}(\.png)?': gyazo.get_content
+            '^https?://(i\.)?cubeupload\.com/(im/)?[a-zA-Z0-9.]+': cubeupload.get_content,
+            '^https?://(i\.)?imgur\.com/(gallery/)?[a-zA-Z0-9.]+': imgur.get_content,
+            '^https?://(cache\.|i\.)?gyazo.com/[a-z0-9]{32}(\.png)?': gyazo.get_content
         }
         for regex, func in paste_regex_to_func.items():
-            if re.match(regex, msg) is None:
+            m = re.match(regex, msg)
+            if not m:
                 continue
-            paste_data = func(msg)
+            paste_data = func(m.group(0))
 
         # either no regex was found to match or no content could be pulled
         if not "paste_data" in locals() or paste_data is None:
@@ -121,7 +131,7 @@ class brotherBot:
 def main():
 
     bot = irc3.IrcBot(
-        nick='brotherBot', autojoins=['#brotherBot'],
+        nick='joyTheRipper', autojoins=['#brotherBot'],
         host='irc.freenode.net', port=6697, ssl=True,
         includes=[
             'irc3.plugins.core',
