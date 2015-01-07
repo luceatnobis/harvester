@@ -37,7 +37,6 @@ class brotherBot:
     def __init__(self, bot):
         self.bot = bot
 
-    #TODO: gyazo, 
     #NOTE: https://irc3.readthedocs.org/en/latest/rfc.html
     @irc3.event(irc3.rfc.PRIVMSG)
     def privmsg_trigger(self, mask=None, event=None, target=None, data=None):
@@ -63,7 +62,7 @@ class brotherBot:
 
         timestamp = str(int(time.time() * 1000))
         paste_regex_to_func = {
-                '^https?://pastebin\.com/(raw\.php\?i=)?[a-zA-Z0-9]+': pastebin.get_content,
+            '^https?://pastebin\.com/(raw\.php\?i=)?[a-zA-Z0-9]+': pastebin.get_content,
             '^https?://p\.pomf\.se/[\d.]+': ppomf.get_content,
             '^https?://(?:infotomb\.com|itmb\.co)/[0-9a-zA-Z.]+': infotomb.get_content,
             '^https?://prntscr\.com/[0-9a-zA-Z]+': prntscrn.get_content,
@@ -103,7 +102,6 @@ class brotherBot:
         
         with libDataBs.DataBs() as db:
             if not db.check(paste_data['md5']):
-                #NOTE: THIS IS COMMENTED OUT FOR DEBUGGING PURPOSES
                 with open(file_location, 'wb') as f:
                     f.write(paste_data['content'])
                 db.set({'hash': paste_data['md5'], 'filename': filename, 'count': 1})

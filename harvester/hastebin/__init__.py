@@ -11,6 +11,7 @@ def get_content(url):
     site_suffix = ".hs"  # hastebin suffixes pastes with ".hs" unless raw mode
     base_url = "http://hastebin.com/raw/%s"
 
+    print(url)
     if url.endswith(".hs"):  # we dont have a raw url
         orig_filename = url.split('/')[-1]
         paste_id = orig_filename.split('.')[0]
@@ -20,6 +21,7 @@ def get_content(url):
         orig_filename = paste_id + site_suffix
         content_url = url
 
+    print(content_url)
     response = requests.get(content_url)
 
     if response.status_code != 200:

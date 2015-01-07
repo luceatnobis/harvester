@@ -6,9 +6,9 @@ import sqlite3
 class DataBs:
     def __init__(self):
         archive_dir = os.environ['HOME'] + os.sep + "archive"
-        archive_json = archive_dir + os.sep + "archive.json"
+        harvester_db = archive_dir + os.sep + "harvester.db"
 
-        self.db = sqlite3.connect('harvester/harvester.db')
+        self.db = sqlite3.connect(harvester_db)
         self.curse = self.db.cursor()
         self.curse.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='harvs'")
         if not self.curse.fetchone():
