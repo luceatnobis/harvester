@@ -49,7 +49,6 @@ class brotherBot:
         nick, user, host = self.split_mask(mask)
         url = self.urlReg(data)
         if url:
-            print(url)
             content = self.harvest(nick, url)
     
     def urlReg(self,msg):
@@ -82,6 +81,7 @@ class brotherBot:
             m = re.match(regex, msg)
             if not m:
                 continue
+            print(m.group(0))
             paste_data = func(m.group(0))
 
         # either no regex was found to match or no content could be pulled
@@ -102,10 +102,17 @@ class brotherBot:
         file_location = final_folder + os.sep + filename
         paste_data['location'] = file_location
         
+        #NOTE: THIS CODE EXISTS BECAUSE OF DEBUGGING PURPOSES
+        with open(file_location, 'wb') as f:
+            f.write(paste_data['content'])
+
         with libDataBs.DataBs() as db:
             if not db.check(paste_data['md5']):
+                #NOTE: THIS IS COMMENTED OUT FOR DEBUGGING PURPOSES
+                """
                 with open(file_location, 'wb') as f:
                     f.write(paste_data['content'])
+                """
                 db.set({'hash': paste_data['md5'], 'filename': filename, 'count': 1})
             else:
                 #TODO add actions to take if file already in archive
