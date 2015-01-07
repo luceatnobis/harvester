@@ -21,6 +21,7 @@ from harvester import cubeupload
 
 from harvester import libDataBs
 
+
 @irc3.plugin
 class brotherBot:
 
@@ -37,6 +38,9 @@ class brotherBot:
     def __init__(self, bot):
         self.bot = bot
 
+    # nickserv handler
+    @irc3.event(r':(?P<ns>NickServ)!NickServ@services. NOTICE (?P<nick>irc3) :'
+                        r'This nickname is registered.*')
     #NOTE: https://irc3.readthedocs.org/en/latest/rfc.html
     @irc3.event(irc3.rfc.PRIVMSG)
     def privmsg_trigger(self, mask=None, event=None, target=None, data=None):
@@ -48,10 +52,10 @@ class brotherBot:
         nick, user, host = self.split_mask(mask)
         url = self.urlReg(data)
         if url:
-            content = self.harvest(nick, url)
-    
-    def urlReg(self,msg):
-        m = re.match('^.*(https?://(-\.)?([^\s/?\.#-]+\.?)+(/[^\s]*)?)',msg)
+            self.harvest(nick, url)
+
+    def urlReg(self, msg):
+        m = re.match('^.*(https?://(-\.)?([^\s/?\.#-]+\.?)+(/[^\s]*)?)', msg)
         if m:
             return m.group(1)
         return
@@ -80,7 +84,6 @@ class brotherBot:
             m = re.match(regex, msg)
             if not m:
                 continue
-            print(m.group(0))
             paste_data = func(m.group(0))
 
         # either no regex was found to match or no content could be pulled
@@ -99,7 +102,7 @@ class brotherBot:
 
         file_location = final_folder + os.sep + filename
         paste_data['location'] = file_location
-        
+
         with libDataBs.DataBs() as db:
             print(db.gibData(paste_data['md5']))
             if not db.check(paste_data['md5']):
@@ -110,7 +113,8 @@ class brotherBot:
                 db.upCount(paste_data['md5'])
         del paste_data['content']
 
-        open(archive_json, 'a').close() #really obscure way to ensure that we always have a file to read from/to
+        #obscure way to ensure that we always have a file to read from/to
+        open(archive_json, 'a').close()
         with open(archive_json, "r") as fj:
             try:
                 dat = json.load(fj)
