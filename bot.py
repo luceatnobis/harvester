@@ -110,8 +110,8 @@ class brotherBot:
                 #TODO add actions to take if file already in archive
                 pass
         del paste_data['content']
-
-        with open(archive_json, "a+") as fj:
+        open(archive_json, 'a').close() #really obscure way to ensure that we always have a file to read from/to
+        with open(archive_json, "r") as fj:
             try:
                 dat = json.load(fj)
                 dat.append(paste_data)
