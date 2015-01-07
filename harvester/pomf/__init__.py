@@ -14,5 +14,3 @@ def get_content(url):
     paste_info['orig_filename'] = m.group(1)
     paste_info['content'] = response.content
     return paste_info
-url = 'http://a.pomf.se/ghiluj.png'
-print(get_content(url)['orig_filename'])

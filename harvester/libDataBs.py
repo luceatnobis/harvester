@@ -4,7 +4,7 @@ import sqlite3
 #Should be used with 'with' keyword to ensure proper initialization and closure of database
 class DataBs:
     def __init__(self):
-        self.db = sqlite3.connect('harvester')
+        self.db = sqlite3.connect('harvester.db')
         self.curse = self.db.cursor()
         self.curse.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='harvs'")
         if not self.curse.fetchone():

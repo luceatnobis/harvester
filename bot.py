@@ -8,7 +8,6 @@ import json
 import hashlib
 
 import irc3
-
 from harvester import gyazo
 from harvester import imgur
 from harvester import ppomf
@@ -19,7 +18,8 @@ from harvester import prntscrn
 from harvester import hastebin
 from harvester import pastebin
 from harvester import cubeupload
-from harvester import DataBs
+
+from harvester import libDataBs
 
 @irc3.plugin
 class brotherBot:
@@ -91,7 +91,7 @@ class brotherBot:
         file_location = final_folder + os.sep + filename
         paste_data['location'] = file_location
         
-        with DataBs() as db:
+        with libDataBs.DataBs() as db:
             if not db.check(paste_data['md5']):
                 with open(file_location, 'wb') as f:
                     f.write(paste_data['content'])
