@@ -8,6 +8,7 @@ import json
 import hashlib
 
 import irc3
+
 from harvester import gyazo
 from harvester import imgur
 from harvester import ppomf
@@ -44,21 +45,27 @@ class brotherBot:
         if not all([mask, event, target, data]):
             raise Exception("shits fucked up yo")
         if target not in self.harvested_channels:
-            return
+            pass
+            # return
 
         nick, user, host = self.split_mask(mask)
-        url = self.urlReg(data)
-        if url:
+        urls = self.urlReg(data)
+        for url in urls:
             self.harvest(nick, url)
 
     def urlReg(self, msg):
+        m = re.findall('(https?://[^\s]+)', msg)
+        return m
+        """
         m = re.match('^.*(https?://(-\.)?([^\s/?\.#-]+\.?)+(/[^\s]*)?)', msg)
         if m:
             return m.group(1)
         return
+        """
 
     def harvest(self, nick, msg):
-        archive_dir = os.environ['HOME'] + os.sep + "archive"
+        # archive_dir = os.environ['HOME'] + os.sep + "archive"
+        archive_dir = os.path.join(os.environ['HOME'], "archive")
         archive_json = archive_dir + os.sep + "archive.json"
 
         timestamp = str(int(time.time() * 1000))
@@ -82,6 +89,7 @@ class brotherBot:
             if not m:
                 continue
             paste_data = func(m.group(0))
+        return
 
         # either no regex was found to match or no content could be pulled
         if not "paste_data" in locals() or paste_data is None:
@@ -133,7 +141,7 @@ class brotherBot:
 def main():
 
     bot = irc3.IrcBot(
-        nick='joyTheRipper', autojoins=['#brotherBot'],
+        nick='brotherBot', autojoins=['#brotherBot'],
         host='irc.freenode.net', port=6697, ssl=True,
         includes=[
             'irc3.plugins.core',
@@ -145,7 +153,8 @@ def main():
     bot.include('irc3.plugins.log')
     bot.run()
 
-main()
+if __name__ == "__main__":
+    main()
 
 """
 urls = [
