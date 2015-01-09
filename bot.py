@@ -35,6 +35,22 @@ class brotherBot:
     harvested_channels = [
         '#brotherBot',
     ]
+    paste_regex_to_mod = {
+        '^https?://pastebin\.com/(raw\.php\?i=)?[a-zA-Z0-9]+': pastebin,
+        '^https?://p\.pomf\.se/[\d.]+': ppomf,
+        '^https?://(?:infotomb\.com|itmb\.co)/[0-9a-zA-Z.]+': infotomb,
+        '^https?://prntscr\.com/[0-9a-zA-Z]+': prntscrn,
+        # dpaste doesnt get along with https, so we're not gonna bother
+        '^http://dpaste\.com/[0-9a-zA-Z]+': dpaste,
+        '^https?://bpaste\.net/(raw|show)/[0-9a-zA-Z]+': bpaste,
+        '^https?://hastebin\.com/(raw/[a-z]+)|([a-z]+\.hs)': hastebin,
+
+        # here come the image hosters
+        '^https?://(i\.)?cubeupload\.com/(im/)?[a-zA-Z0-9.]+': cubeupload,
+        # '^https?://(i\.)?imgur\.com/(gallery/)?[a-zA-Z0-9.]+': imgur,
+        '^https?://(i\.)?imgur\.com/(a/|gallery/)?[a-zA-Z0-9.]+': imgur,
+        '^https?://(cache\.|i\.)?gyazo.com/[a-z0-9]{32}(\.png)?': gyazo
+    }
 
     def __init__(self, bot):
         self.bot = bot
@@ -45,79 +61,70 @@ class brotherBot:
         if not all([mask, event, target, data]):
             raise Exception("shits fucked up yo")
         if target not in self.harvested_channels:
-            pass
-            # return
+            return
 
         nick, user, host = self.split_mask(mask)
-        urls = self.urlReg(data)
-        for url in urls:
+
+        for url in self.urlReg(data):
             self.harvest(nick, url)
 
-    def urlReg(self, msg):
-        m = re.findall('(https?://[^\s]+)', msg)
+    def urlReg(self, url):
+        m = re.findall('(https?://[^\s]+)', url)
         return m
-        """
-        m = re.match('^.*(https?://(-\.)?([^\s/?\.#-]+\.?)+(/[^\s]*)?)', msg)
-        if m:
-            return m.group(1)
-        return
-        """
 
-    def harvest(self, nick, msg):
-        # archive_dir = os.environ['HOME'] + os.sep + "archive"
-        archive_dir = os.path.join(os.environ['HOME'], "archive")
-        archive_json = archive_dir + os.sep + "archive.json"
-
+    def harvest(self, nick, url):
+        # for more correlation between logs and timestamps, generate it here
         timestamp = str(int(time.time() * 1000))
-        paste_regex_to_func = {
-            '^https?://pastebin\.com/(raw\.php\?i=)?[a-zA-Z0-9]+': pastebin.get_content,
-            '^https?://p\.pomf\.se/[\d.]+': ppomf.get_content,
-            '^https?://(?:infotomb\.com|itmb\.co)/[0-9a-zA-Z.]+': infotomb.get_content,
-            '^https?://prntscr\.com/[0-9a-zA-Z]+': prntscrn.get_content,
-            # dpaste doesnt get along with https, so we're not gonna bother
-            '^http://dpaste\.com/[0-9a-zA-Z]+': dpaste.get_content,
-            '^https?://bpaste\.net/(raw|show)/[0-9a-zA-Z]+': bpaste.get_content,
-            '^https?://hastebin\.com/(raw/[a-z]+)|([a-z]+\.hs)': hastebin.get_content,
 
-            # here come the image hosters
-            '^https?://(i\.)?cubeupload\.com/(im/)?[a-zA-Z0-9.]+': cubeupload.get_content,
-            '^https?://(i\.)?imgur\.com/(gallery/)?[a-zA-Z0-9.]+': imgur.get_content,
-            '^https?://(cache\.|i\.)?gyazo.com/[a-z0-9]{32}(\.png)?': gyazo.get_content
-        }
-        for regex, func in paste_regex_to_func.items():
-            m = re.match(regex, msg)
-            if not m:
-                continue
-            paste_data = func(m.group(0))
-        return
+        paste_info = self.paste_url_to_json(url)
+        paste_info['timestamp'] = timestamp
+
+    def paste_url_to_json(self, url):
+        paste_module = self.get_harvest_module(url)
+        if paste_module is None:
+            return
+
+        paste_data = paste_module.get_content(url)
 
         # either no regex was found to match or no content could be pulled
         if not "paste_data" in locals() or paste_data is None:
                 return
 
-        paste_data['md5'] = hashlib.md5(paste_data['content']).hexdigest()
-        paste_data['timestamp'] = timestamp
+        paste_data = self.hash_content(paste_data)
+        return paste_data
+
+    def store_paste(self, paste_data):
+        archive_dir = os.path.join(os.environ['HOME'], "archive")
+        archive_json = os.path.join(archive_dir, "archive.json")
+
         final_folder = (
             archive_dir + os.sep + paste_data['site'])
 
         if not os.path.exists(final_folder):
             os.makedirs(final_folder)
-        filename = str(timestamp) + "_" + paste_data['orig_filename']
+
+        filename = "%s_%s" % (
+            paste_data['timestamp'], paste_data['orig_filename'])
         filename += ".%s" % paste_data['ext'] if paste_data['ext'] else ""
 
         file_location = final_folder + os.sep + filename
         paste_data['location'] = file_location
+
+        return
 
         with libDataBs.DataBs() as db:
             print(db.gibData(paste_data['md5']))
             if not db.check(paste_data['md5']):
                 with open(file_location, 'wb') as f:
                     f.write(paste_data['content'])
-                db.set({'hash': paste_data['md5'], 'filename': filename, 'count': 1})
+                db.set({
+                    'hash': paste_data['md5'],
+                    'filename': filename,
+                    'count': 1
+                })
             else:
                 db.upCount(paste_data['md5'])
         del paste_data['content']
-        print(paste_data)
 
         #obscure way to ensure that we always have a file to read from/to
         open(archive_json, 'a').close()
@@ -132,11 +139,25 @@ class brotherBot:
 
         return True
 
+    def hash_content(self, paste_data):
+        if 'type' not in paste_data:  # we assume the content is not a gallery
+            paste_data['md5'] = hashlib.md5(paste_data['content']).hexdigest()
+            return paste_data
+
     def split_mask(self, mask_raw):
         nick, _ = mask_raw.split('!')
         user, host = _.split('@')
         return (nick, user, host)
 
+    def get_harvest_module(self, url):
+        """
+        We operate under the assumption that only one regex can match a link.
+        If this ever changes we really do have a problem.
+        """
+        for regex, mod in self.paste_regex_to_mod.items():
+            m = re.match(regex, url)
+            if m:
+                return mod
 
 def main():
 
