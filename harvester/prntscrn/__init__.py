@@ -20,7 +20,7 @@ def get_content(url):
     paste['content'] = response.content
     paste['orig_filename'] = m.group(1)
     paste['ext'] = m.group(2)
-    return paste
+    return [paste]
 
 """
 url = 'http://prntscr.com/5ow1aq'
