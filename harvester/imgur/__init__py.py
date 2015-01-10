@@ -18,8 +18,7 @@ def get_content(url):
         response = requests.get(url1)
         if response.status_code != 200:
             return
-
-    paste_info['ext'] = m.group(2)
+    paste_info['extension'] = m.group(2)
     paste_info['orig_filename'] = m.group(1)
     paste_info['content'] = response.content
     return paste_info
