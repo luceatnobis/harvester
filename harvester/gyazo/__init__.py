@@ -24,5 +24,5 @@ def get_content(url):
     paste_info['ext'] = "png"
     paste_info['orig_filename'] = img_id
     paste_info['content'] = response.content
-    return [paste_info]
+    return paste_info
 

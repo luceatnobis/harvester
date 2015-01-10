@@ -27,7 +27,7 @@ def get_content(url):
     paste_info['content'] = response.content
     paste_info['orig_filename'] = m.group(1)
     paste_info['ext'] = idd
-    return [paste_info]
+    return paste_info
 
 '''
 url = 'https://infotomb.com/y53jc'
