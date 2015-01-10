@@ -17,7 +17,7 @@ def get_content(url):
     paste_info['ext'] = m.group(3)
     paste_info['orig_filename'] = m.group(2)
     paste_info['content'] = response.content
-    return paste_info
+    return [paste_info]
 '''
 url = 'http://cubeupload.com/im/P7XnyV.jpg'
 print get_content(url)

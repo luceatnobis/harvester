@@ -25,4 +25,4 @@ def get_content(url):
     paste_info['ext'] = ""
     paste_info['orig_filename'] = orig_filename
     paste_info['content'] = response.content
-    return paste_info
+    return [paste_info]

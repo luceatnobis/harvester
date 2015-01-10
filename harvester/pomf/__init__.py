@@ -13,4 +13,4 @@ def get_content(url):
     paste_info['ext'] = m.group(2)
     paste_info['orig_filename'] = m.group(1)
     paste_info['content'] = response.content
-    return paste_info
+    return [paste_info]
