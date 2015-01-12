@@ -31,7 +31,7 @@ class brotherBot:
         nick, user, host = self.split_mask(mask)
         url = urlReg(data)
         if url:
-            harvest(nick, url, self.bot, target)
+            harvest(mask, url, self.bot, target)
 
     def split_mask(self, mask_raw):
         nick, _ = mask_raw.split('!')

@@ -20,7 +20,7 @@ from harvester import libDataBs
 
 #Function operating on harvested data. 
 #Takes dictionary as input
-def saver(paste_data,timestamp):
+def saver(paste_data,timestamp,mask):
     archive_dir = os.environ['HOME'] + os.sep + "archive"
     archive_json = archive_dir + os.sep + "archive.json"
     paste_data['md5'] = hashlib.md5(paste_data['content']).hexdigest()
@@ -45,8 +45,8 @@ def saver(paste_data,timestamp):
         else:
             db.upCount(paste_data['md5'])
     del paste_data['content']
+    paste_data['mask'] = mask
     print(paste_data)
- 
     #obscure way to ensure that we always have a file to read from/to
     open(archive_json, 'a').close()
     with open(archive_json, "r") as fj:
@@ -59,8 +59,7 @@ def saver(paste_data,timestamp):
         json.dump(dat, fj)
 
 #Given url, checks if it matches one of regexes and tries to gather data from them
-def harvest(nick, msg, bot,chan):
-
+def harvest(mask, msg, bot,chan):
     timestamp = str(int(time.time() * 1000))
     #NOTE site harvesters should return a list of dictionaries, even if only one file has been gathered
     paste_regex_to_func = {
@@ -91,7 +90,7 @@ def harvest(nick, msg, bot,chan):
     #print("Paste data:")
     #print(paste_data)
     for data in paste_data:
-        saver(data,timestamp)
+        saver(data,timestamp,mask)
         filenames.append(data['orig_filename'])
     bot.privmsg(chan, "^ Archived file(s): " + " ".join(filenames) + " ^")
     return True 
