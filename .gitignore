@@ -1,4 +1,5 @@
 .*swp
 *pyc
-harvester.db
+# why harvester.db? harvester.db
 **/__pycache__
+*~
