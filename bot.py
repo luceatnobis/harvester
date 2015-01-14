@@ -47,7 +47,6 @@ class brotherBot:
 
         # here come the image hosters
         '^https?://(i\.)?cubeupload\.com/(im/)?[a-zA-Z0-9.]+': cubeupload,
-        # '^https?://(i\.)?imgur\.com/(gallery/)?[a-zA-Z0-9.]+': imgur,
         '^https?://(i\.)?imgur\.com/(a/|gallery/)?[a-zA-Z0-9.]+': imgur,
         '^https?://(cache\.|i\.)?gyazo.com/[a-z0-9]{32}(\.png)?': gyazo
     }
