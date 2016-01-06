@@ -8,9 +8,11 @@ def get_content(url):
         'site': 'hastebin',
         'url': url,
     }
-    site_suffix = ".hs"  # hastebin suffixes pastes with ".hs" unless raw mode
-    base_url = "http://hastebin.com/raw/%s"
-    if url.endswith(".hs"):  # we dont have a raw url
+
+    # hastebin suffixes pastes with ".hs" unless raw mode
+    site_suffix = ".coffee"      base_url = "http://hastebin.com/raw/%s"
+
+    if url.endswith(site_suffix):  # we dont have a raw url
         orig_filename = url.split('/')[-1]
         paste_id = orig_filename.split('.')[0]
         content_url = base_url % paste_id
