@@ -2,59 +2,15 @@
 # -+- coding: utf-8 -*-
 
 import irc3
-from harvester.utils import *
-@irc3.plugin
-class brotherBot:
+#  from harvester.utils import *
+from settings import BotSettings
 
-    requires = [
-        'irc3.plugins.core',
-        'irc3.plugins.userlist',
-        'irc3.plugins.command',
-        'irc3.plugins.human',
-    ]
-    harvested_channels = [
-        '#joytheripper',
-        '##426699k'
-    ]
-
-    def __init__(self, bot):
-        self.bot = bot
-
-    #NOTE: https://irc3.readthedocs.org/en/latest/rfc.html
-    @irc3.event(irc3.rfc.PRIVMSG)
-    def privmsg_trigger(self, mask=None, event=None, target=None, data=None):
-        if not all([mask, event, target, data]):
-            raise Exception("shits fucked up yo")
-        if target not in self.harvested_channels:
-            return
-
-        nick, user, host = self.split_mask(mask)
-        url = urlReg(data)
-        if url:
-            harvest(mask, url, self.bot, target)
-
-    def split_mask(self, mask_raw):
-        nick, _ = mask_raw.split('!')
-        user, host = _.split('@')
-        return (nick, user, host)
-    
-    @irc3.event(irc3.rfc.JOIN)
-    def myevent(self,mask=None, event=None, target=None, data=None, channel=None ):
-        self.bot.privmsg(channel, "All of your links belong to me! (As long as you use proper sites)")
 
 def main():
     global bot
-    bot = irc3.IrcBot(
-        nick='MyLittleLolly', autojoins=['#joyTheRipper','##426699k'],
-        host='irc.freenode.net', port=6697, ssl=True,
-        includes=[
-            'irc3.plugins.core',
-            'irc3.plugins.command',
-            'irc3.plugins.human',
-            __name__,
-        ]
-    )
+    bot = irc3.IrcBot(**(BotSettings.getSettings()))
     bot.include('irc3.plugins.log')
+    print("trying to run")
     bot.run()
 
 bot = None
