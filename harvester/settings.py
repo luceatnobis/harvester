@@ -25,7 +25,7 @@ class Settings(object):
 
 
 class BotSettings(Settings):
-    nick = 'boringBot'
+    nick = 'whoreBot'
     host = 'irc.freenode.net'
     port = 6697
     ssl = True

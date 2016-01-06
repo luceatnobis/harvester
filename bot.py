@@ -8,6 +8,7 @@ import json
 import hashlib
 
 import irc3
+"""
 <<<<<<< HEAD
 from harvester import gyazo
 from harvester import imgur
@@ -66,16 +67,22 @@ def main():
         includes=[
             'irc3.plugins.core',
             'irc3.plugins.command',
+
             'irc3.plugins.human',
             __name__,
         ]
     )
 =======
+"""
 from harvester.settings import BotSettings
 #  from harvester.utils import urlReg, harvest
 
 if __name__ == "__main__":
     bot = irc3.IrcBot(**(BotSettings.getSettings()))
+    bot.include('irc3.plugins.log')
+    bot.include('harvester.harvester')
+    bot.run()
+"""
 >>>>>>> 4f5b0caa29f92547c36b4ce23a1ba6af06d8484e
     bot.include('irc3.plugins.log')
     bot.include('harvester.harvester')
@@ -85,8 +92,9 @@ if __name__ == "__main__":
 main()
 
 =======
->>>>>>> 4f5b0caa29f92547c36b4ce23a1ba6af06d8484e
+ >>>>>>> 4f5b0caa29f92547c36b4ce23a1ba6af06d8484e
 """
+
 urls = [
     'http://gyazo.com/fc12a9bb2a4b92d1debef49b8279371f',
     'http://i.gyazo.com/fc12a9bb2a4b92d1debef49b8279371f.png',
@@ -101,4 +109,3 @@ urls = [
     'http://prntscr.com/5o2enp',
     'https://infotomb.com/y53jc',
 ]
-"""
