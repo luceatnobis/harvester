@@ -1,17 +1,15 @@
 #!/usr/bin/env python3
 # -+- coding: utf-8 -*-
-import time
 import json
 import hashlib
 import re
-from os import path, makedirs
+from os import path, makedirs, SEEK_CUR
 
 from harvester import libDataBs
 
 
 def getOrCreatePath(path_):
     if not path.exists(path_):
-        print(path_)
         makedirs(path_)
 
 
@@ -24,7 +22,22 @@ def setUpDir(site, path_):
     return final_dir, archive_json
 
 
-def saver(data, timestamp, path_):
+def appendToJson(data, file):
+    """Append data to the end of json list without parsing it."""
+    with open(file, "ab+") as fj:
+        data_string = "{}]".format(json.dumps(data))
+        if fj.tell() > 0:
+            fj.seek(-1, SEEK_CUR)  # remove closing bracket of the json list
+            fj.truncate()
+            data_string = ", {}".format(data_string)
+        else:
+            data_string = "[{}".format(data_string)
+        b = bytearray()
+        b.extend(map(ord, data_string))
+        fj.write(b)
+
+
+def save(data, timestamp, path_):
     """Save given data into specified environment."""
     # prepare directory
     final_dir, archive_json = setUpDir(data['site'], path_)
@@ -39,53 +52,18 @@ def saver(data, timestamp, path_):
 
     # check if we already downloaded the file
     with libDataBs.DataBs() as db:
-        print(db.gibData(data['md5']))
-        if not db.check(data['md5']):
+        if not db.checkHashExistence(data['md5']):
             # save the file
             with open(file_location, 'wb') as f:
                 f.write(data['content'])
-            db.set({'hash': data['md5'], 'filename': filename, 'count': 1})
+            db.insertData({'hash': data['md5'], 'filename': filename, 'count': 1})
         else:
             # just update the count
             db.upCount(data['md5'])
     del data['content']
-    print(data)
 
     # save information about data in json file
-    # obscure way to ensure that we always have a file to read from/to
-    open(archive_json, 'a').close()
-    with open(archive_json, "r") as fj:
-        try:
-            dat = json.load(fj)
-            dat.append(data)
-        except ValueError:
-            dat = [data]
-    with open(archive_json, 'w+') as fj:
-        json.dump(dat, fj)
-
-
-def harvest(mask, msg, bot, chan, settings):
-    """Try to harvest given url and save the file."""
-    timestamp = str(int(time.time() * 1000))
-    #NOTE site harvesters should return a list of dictionaries, even if only one file has been gathered
-    # try to match url against known services
-    for regex, get_content in settings.service_regex_dict.items():
-        m = re.match(regex, msg)
-        if not m:
-            continue
-        paste_data = get_content(m.group(0))
-
-    # either no regex was found to match or no content could be pulled
-    if "paste_data" not in locals() or paste_data is None:
-        return
-    #NOTE paste_data is a list of dictionaries
-    filenames = []
-    for data in paste_data:
-        data['mask'] = mask
-        saver(data, timestamp, settings.path)
-        filenames.append(data['orig_filename'])
-    bot.privmsg(chan, "^ Archived file(s): {} ^".format(" ".join(filenames)))
-    return True
+    appendToJson(data, archive_json)
 
 
 def urlReg(msg):

@@ -8,9 +8,7 @@ from harvester import prntscrn
 from harvester import hastebin
 from harvester import pastebin
 from harvester import cubeupload
-from harvester.utils import urlReg, harvest
 from os import environ
-import irc3
 
 
 class Settings(object):
@@ -36,7 +34,7 @@ class BotSettings(Settings):
         'irc3.plugins.core',
         'irc3.plugins.command',
         'irc3.plugins.human',
-        __name__,
+        '__main__'
     ]
 
     autojoins = [
@@ -50,7 +48,7 @@ class HarvesterSettings(Settings):
         '#brotherBot'
     ]
 
-    path = [environ['HOME'], 'archive']
+    archive_path = [environ['HOME'], 'archive']
     service_regex_dict = {
         '^https?://pastebin\.com/(raw\.php\?i=)?[a-zA-Z0-9]+': pastebin.get_content,
         '^https?://p\.pomf\.se/[\d.]+': ppomf.get_content,
@@ -65,39 +63,3 @@ class HarvesterSettings(Settings):
         '^https?://(i\.)?imgur\.com/(gallery/)?[a-zA-Z0-9.,]+': imgur.get_content,
         '^https?://(cache\.|i\.)?gyazo.com/[a-z0-9]{32}(\.png)?': gyazo.get_content
     }
-
-
-@irc3.plugin
-class brotherBot:
-    requires = [
-        'irc3.plugins.core',
-        'irc3.plugins.userlist',
-        'irc3.plugins.command',
-        'irc3.plugins.human',
-    ]
-
-    def __init__(self, bot):
-        print("hello")
-        self.bot = bot
-
-    #NOTE: https://irc3.readthedocs.org/en/latest/rfc.html
-    @irc3.event(irc3.rfc.PRIVMSG)
-    def privmsg_trigger(self, mask=None, event=None, target=None, data=None):
-        if not all([mask, event, target, data]):
-            raise Exception("shits fucked up yo")
-        if target not in HarvesterSettings.harvested_channels:
-            return
-
-        nick, user, host = self.split_mask(mask)
-        url = urlReg(data)
-        if url:
-            harvest(mask, url, self.bot, target, HarvesterSettings())
-
-    def split_mask(self, mask_raw):
-        nick, _ = mask_raw.split('!')
-        user, host = _.split('@')
-        return (nick, user, host)
-
-    @irc3.event(irc3.rfc.JOIN)
-    def myevent(self, mask=None, event=None, target=None, data=None, channel=None):
-        self.bot.privmsg(channel, "All of your links belong to me! (As long as you use proper sites)")

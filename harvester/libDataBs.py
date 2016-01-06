@@ -1,8 +1,9 @@
 import os
 import sqlite3
 
-#Simple sqlite wrapper
-#Should be used with 'with' keyword to ensure proper initialization and closure of database
+
+# Simple sqlite wrapper
+# Should be used with 'with' keyword to ensure proper initialization and closure of database
 class DataBs:
     def __init__(self):
         archive_dir = os.environ['HOME'] + os.sep + "archive"
@@ -21,31 +22,35 @@ class DataBs:
         self.db.commit()
         self.db.close()
 
-    def check(self, hash):
-        self.curse.execute("SELECT hash, filename, count FROM harvs WHERE hash = ?",[hash])
+    def checkHashExistence(self, hash):
+        """Check if given hash is already in the database."""
+        self.curse.execute("SELECT hash, filename, count FROM harvs WHERE hash = ?", [hash])
         if self.curse.fetchone():
             return True
         else:
             return False
-    def set(self, dct):
-        if self.check(dct['hash']):
+
+    def insertData(self, dct):
+        """Insert hash, filename and count into database."""
+        if self.checkHashExistence(dct['hash']):
             return False
         else:
             self.curse.execute('''INSERT INTO harvs(hash, filename, count)
                 VALUES(:hash,:filename, :count)''', dct)
             return True
 
-    def upCount(self,hash):
-        if not self.check(hash):
+    def upCount(self, hash):
+        if not self.checkHashExistence(hash):
             return False
         else:
             self.curse.execute("UPDATE harvs SET count= count + 1 WHERE hash = ?", [hash])
             return True
-    def gibData(self,hash):
-        if not self.check(hash):
+
+    def gibData(self, hash):
+        if not self.checkHashExistence(hash):
             return
         else:
-            self.curse.execute("SELECT hash, filename, count FROM harvs WHERE hash=?",[hash])
+            self.curse.execute("SELECT hash, filename, count FROM harvs WHERE hash=?", [hash])
             return [i for i in self.curse.fetchone()]
 
 #
@@ -53,9 +58,9 @@ class DataBs:
 d = {
             'hash': 'faf0e9ab400ef5a7e1a9ea55277fa559',
             'filename': '1414478734164',
-            'count':  1                                  
+            'count':  1
     }
-with DataBs() as dbs:    
+with DataBs() as dbs:
     print check(d['hash'])
     dbs.set(d)
     dbs.upCount(d['hash'])

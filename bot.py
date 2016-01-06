@@ -2,19 +2,14 @@
 # -+- coding: utf-8 -*-
 
 import irc3
-#  from harvester.utils import *
-from settings import BotSettings
+from harvester.settings import BotSettings
+#  from harvester.utils import urlReg, harvest
 
-
-def main():
-    global bot
+if __name__ == "__main__":
     bot = irc3.IrcBot(**(BotSettings.getSettings()))
     bot.include('irc3.plugins.log')
-    print("trying to run")
+    bot.include('harvester.harvester')
     bot.run()
-
-bot = None
-main()
 
 """
 urls = [
