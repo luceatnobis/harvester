@@ -8,6 +8,7 @@ import json
 import hashlib
 
 import irc3
+<<<<<<< HEAD
 from harvester import gyazo
 from harvester import imgur
 from harvester import ppomf
@@ -69,11 +70,22 @@ def main():
             __name__,
         ]
     )
+=======
+from harvester.settings import BotSettings
+#  from harvester.utils import urlReg, harvest
+
+if __name__ == "__main__":
+    bot = irc3.IrcBot(**(BotSettings.getSettings()))
+>>>>>>> 4f5b0caa29f92547c36b4ce23a1ba6af06d8484e
     bot.include('irc3.plugins.log')
+    bot.include('harvester.harvester')
     bot.run()
 
+<<<<<<< HEAD
 main()
 
+=======
+>>>>>>> 4f5b0caa29f92547c36b4ce23a1ba6af06d8484e
 """
 urls = [
     'http://gyazo.com/fc12a9bb2a4b92d1debef49b8279371f',

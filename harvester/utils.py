@@ -1,63 +1,68 @@
 #!/usr/bin/env python3
 # -+- coding: utf-8 -*-
-import time
 import json
-import hashlib 
+import hashlib
 import re
-import os
+from os import path, makedirs, SEEK_CUR
 
-from harvester import gyazo
-from harvester import imgur
-from harvester import ppomf
-from harvester import bpaste
-from harvester import dpaste
-from harvester import infotomb
-from harvester import prntscrn
-from harvester import hastebin
-from harvester import pastebin
-from harvester import cubeupload
 from harvester import libDataBs
 
-#Function operating on harvested data. 
-#Takes dictionary as input
-def saver(paste_data,timestamp,mask):
-    archive_dir = os.environ['HOME'] + os.sep + "archive"
-    archive_json = archive_dir + os.sep + "archive.json"
-    paste_data['md5'] = hashlib.md5(paste_data['content']).hexdigest()
-    paste_data['timestamp'] = timestamp
-    final_folder = (
-        archive_dir + os.sep + paste_data['site'])
- 
-    if not os.path.exists(final_folder):
-        os.makedirs(final_folder)
-    filename = str(timestamp) + "_" + paste_data['orig_filename']
-    filename += ".%s" % paste_data['ext'] if paste_data['ext'] else ""
- 
-    file_location = final_folder + os.sep + filename
-    paste_data['location'] = file_location
- 
-    with libDataBs.DataBs() as db:
-        print(db.gibData(paste_data['md5']))
-        if not db.check(paste_data['md5']):
-            with open(file_location, 'wb') as f:
-                f.write(paste_data['content'])
-            db.set({'hash': paste_data['md5'], 'filename': filename, 'count': 1})
-        else:
-            db.upCount(paste_data['md5'])
-    del paste_data['content']
-    paste_data['mask'] = mask
-    print(paste_data)
-    #obscure way to ensure that we always have a file to read from/to
-    open(archive_json, 'a').close()
-    with open(archive_json, "r") as fj:
-        try:
-            dat = json.load(fj)
-            dat.append(paste_data)
-        except ValueError:
-            dat = [paste_data]
-    with open(archive_json, 'w+') as fj:
-        json.dump(dat, fj)
 
+def getOrCreatePath(path_):
+    if not path.exists(path_):
+        makedirs(path_)
+
+
+def setUpDir(site, path_):
+    """Prepare directory and json path for download."""
+    archive_dir = path.join(*path_)
+    archive_json = path.join(archive_dir, "archive.json")
+    final_dir = path.join(archive_dir, site)
+    getOrCreatePath(final_dir)
+    return final_dir, archive_json
+
+
+def appendToJson(data, file):
+    """Append data to the end of json list without parsing it."""
+    with open(file, "ab+") as fj:
+        data_string = "{}]".format(json.dumps(data))
+        if fj.tell() > 0:
+            fj.seek(-1, SEEK_CUR)  # remove closing bracket of the json list
+            fj.truncate()
+            data_string = ", {}".format(data_string)
+        else:
+            data_string = "[{}".format(data_string)
+        b = bytearray()
+        b.extend(map(ord, data_string))
+        fj.write(b)
+
+
+def save(data, timestamp, path_):
+    """Save given data into specified environment."""
+    # prepare directory
+    final_dir, archive_json = setUpDir(data['site'], path_)
+
+    # prepare filename and location
+    data['md5'] = hashlib.md5(data['content']).hexdigest()
+    data['timestamp'] = timestamp
+    filename = str(timestamp) + "_" + data['orig_filename']
+    filename += ".%s" % data['ext'] if data['ext'] else ""
+    file_location = path.join(final_dir, filename)
+    data['location'] = file_location
+
+    # check if we already downloaded the file
+    with libDataBs.DataBs() as db:
+        if not db.checkHashExistence(data['md5']):
+            # save the file
+            with open(file_location, 'wb') as f:
+                f.write(data['content'])
+            db.insertData({'hash': data['md5'], 'filename': filename, 'count': 1})
+        else:
+            # just update the count
+            db.upCount(data['md5'])
+    del data['content']
+
+<<<<<<< HEAD
 #Given url, checks if it matches one of regexes and tries to gather data from them
 def harvest(mask, msg, bot,chan):
     timestamp = str(int(time.time() * 1000))
@@ -95,10 +100,14 @@ def harvest(mask, msg, bot,chan):
         filenames.append(data['orig_filename'])
     bot.privmsg(chan, "^ Archived file(s): " + " ".join(filenames) + " ^")
     return True 
+=======
+    # save information about data in json file
+    appendToJson(data, archive_json)
+>>>>>>> 4f5b0caa29f92547c36b4ce23a1ba6af06d8484e
 
 
-#Simple regex to match an url
 def urlReg(msg):
+    """Try to match an url."""
     m = re.match('^.*(https?://(-\.)?([^\s/?\.#-]+\.?)+(/[^\s]*)?)', msg)
     if m:
         return m.group(1)
