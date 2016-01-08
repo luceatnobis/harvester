@@ -41,6 +41,17 @@ class BotSettings(Settings):
         '#brotherBot'
     ]
 
+    log_formatters = {
+        'privmsg': '{date:%Y-%m-%d %H:%M} <{mask.nick}> {data}',
+        'join': '{date:%Y-%m-%d %H:%M} {mask.nick} joined {channel}',
+        'part': '{date:%Y-%m-%d %H:%M} {mask.nick} has left {channel} ({data})',
+        'quit': '{date:%Y-%m-%d %H:%M} {mask.nick} has quit ({data})',
+        'topic': '{date:%Y-%m-%d %H:%M} {mask.nick} has set topic to: {data}',
+    }
+
+    log_filename = [environ['HOME'], 'archive', 'logs', '{host}',
+                    '{channel}-{date:%Y-%m-%d}.log']
+
 
 class HarvesterSettings(Settings):
 
