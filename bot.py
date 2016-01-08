@@ -8,92 +8,16 @@ import json
 import hashlib
 
 import irc3
-"""
-<<<<<<< HEAD
-from harvester import gyazo
-from harvester import imgur
-from harvester import ppomf
-from harvester import bpaste
-from harvester import dpaste
-from harvester import infotomb
-from harvester import prntscrn
-from harvester import hastebin
-from harvester import pastebin
-from harvester import cubeupload
-
-from harvester import libDataBs
-
-
-@irc3.plugin
-class brotherBot:
-
-    requires = [
-        'irc3.plugins.core',
-        'irc3.plugins.userlist',
-        'irc3.plugins.command',
-        'irc3.plugins.human',
-    ]
-    harvested_channels = [
-        '#brotherBot',
-    ]
-
-    def __init__(self, bot):
-        self.bot = bot
-
-    #NOTE: https://irc3.readthedocs.org/en/latest/rfc.html
-    @irc3.event(irc3.rfc.PRIVMSG)
-    def privmsg_trigger(self, mask=None, event=None, target=None, data=None):
-        if not all([mask, event, target, data]):
-            raise Exception("shits fucked up yo")
-        if target not in self.harvested_channels:
-            return
-
-        nick, user, host = self.split_mask(mask)
-        url = self.urlReg(data)
-        if url:
-            harvest(mask, url, self.bot, target)
-
-    def split_mask(self, mask_raw):
-        nick, _ = mask_raw.split('!')
-        user, host = _.split('@')
-        return (nick, user, host)
-
-
-def main():
-
-    bot = irc3.IrcBot(
-        nick='joyTheRipper', autojoins=['#brotherBot'],
-        host='irc.freenode.net', port=6697, ssl=True,
-        includes=[
-            'irc3.plugins.core',
-            'irc3.plugins.command',
-
-            'irc3.plugins.human',
-            __name__,
-        ]
-    )
-=======
-"""
 from harvester.settings import BotSettings
 #  from harvester.utils import urlReg, harvest
 
 if __name__ == "__main__":
+    import pdb
+    pdb.set_trace()
     bot = irc3.IrcBot(**(BotSettings.getSettings()))
     bot.include('irc3.plugins.log')
     bot.include('harvester.harvester')
     bot.run()
-"""
->>>>>>> 4f5b0caa29f92547c36b4ce23a1ba6af06d8484e
-    bot.include('irc3.plugins.log')
-    bot.include('harvester.harvester')
-    bot.run()
-
-<<<<<<< HEAD
-main()
-
-=======
- >>>>>>> 4f5b0caa29f92547c36b4ce23a1ba6af06d8484e
-"""
 
 urls = [
     'http://gyazo.com/fc12a9bb2a4b92d1debef49b8279371f',
