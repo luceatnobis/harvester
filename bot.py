@@ -78,8 +78,15 @@ from harvester.settings import BotSettings
 #  from harvester.utils import urlReg, harvest
 
 if __name__ == "__main__":
-    bot = irc3.IrcBot(**(BotSettings.getSettings()))
-    bot.include('irc3.plugins.log')
+    settings = BotSettings.getSettings()
+    logger = {
+        'irc3.plugins.logger': {
+            'handler': 'harvester.logger.CropKeeper'
+        }
+    }
+    settings.update(logger)
+    bot = irc3.IrcBot(**(settings))
+    bot.include('irc3.plugins.logger')
     bot.include('harvester.harvester')
     bot.run()
 """
