@@ -1,6 +1,7 @@
 .*swp
 *pyc
 # why harvester.db? harvester.db
+harvester/imgur/imgur_key.py
 config/
 **/__pycache__
 *~
