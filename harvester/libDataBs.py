@@ -1,12 +1,14 @@
 import os
+import pdb
 import sqlite3
 
 
 # Simple sqlite wrapper
 # Should be used with 'with' keyword to ensure proper initialization and closure of database
+
 class DataBs:
-    def __init__(self):
-        archive_dir = os.environ['HOME'] + os.sep + "archive"
+    def __init__(self, data={}):
+        archive_dir = data.get('archive_dir', os.environ['HOME'] + os.sep + "archive")
         harvester_db = archive_dir + os.sep + "harvester.db"
 
         self.db = sqlite3.connect(harvester_db)

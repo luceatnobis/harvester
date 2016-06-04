@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import pdb
 import requests
 
 
@@ -9,7 +10,7 @@ def get_content(url):
         'url': url,
     }
     base_url = "http://hastebin.com/raw/%s"
-    if url.endswith(".hs"):  # we dont have a raw url
+    if "." in url:
         orig_filename = url.split('/')[-1]
         paste_id = orig_filename.split('.')[0]
         content_url = base_url % paste_id
@@ -25,4 +26,4 @@ def get_content(url):
     paste_info['ext'] = ""
     paste_info['orig_filename'] = orig_filename
     paste_info['content'] = response.content
-    return paste_info
+    return [paste_info]

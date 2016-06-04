@@ -8,16 +8,19 @@ from os import path, makedirs, SEEK_CUR
 from harvester import libDataBs
 
 
-def getOrCreatePath(path_):
-    if not path.exists(path_):
-        makedirs(path_)
+def getOrCreatePath(archive_base_path):
+    if not path.exists(archive_base_path):
+        makedirs(archive_base_path)
 
 
-def setUpDir(site, path_):
+def setUpDir(site, archive_base_path):
     """Prepare directory and json path for download."""
-    archive_dir = path.join(*path_)
+    """
+    archive_dir = path.join(*archive_base_path)
     archive_json = path.join(archive_dir, "archive.json")
-    final_dir = path.join(archive_dir, site)
+    """
+    archive_json = path.join(archive_base_path, "archive.json")
+    final_dir = path.join(archive_base_path, site)
     getOrCreatePath(final_dir)
     return final_dir, archive_json
 
@@ -37,10 +40,11 @@ def appendToJson(data, file):
         fj.write(b)
 
 
-def save(data, timestamp, path_):
+def save(data, timestamp, archive_base_path):
+    import pdb
     """Save given data into specified environment."""
     # prepare directory
-    final_dir, archive_json = setUpDir(data['site'], path_)
+    final_dir, archive_json = setUpDir(data['site'], archive_base_path)
 
     # prepare filename and location
     data['md5'] = hashlib.md5(data['content']).hexdigest()
@@ -51,7 +55,8 @@ def save(data, timestamp, path_):
     data['location'] = file_location
 
     # check if we already downloaded the file
-    with libDataBs.DataBs() as db:
+    with libDataBs.DataBs(data={'archive_dir': archive_base_path}) as db:
+        print(db.gibData(data['md5']))
         if not db.checkHashExistence(data['md5']):
             # save the file
             with open(file_location, 'wb') as f:
@@ -61,6 +66,7 @@ def save(data, timestamp, path_):
             # just update the count
             db.upCount(data['md5'])
     del data['content']
+    print(data)
 
     # save information about data in json file
     appendToJson(data, archive_json)

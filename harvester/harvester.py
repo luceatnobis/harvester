@@ -1,4 +1,6 @@
 import irc3
+import pdb
+from irc3.plugins.command import command
 from harvester.settings import HarvesterSettings
 from harvester.utils import urlReg, save
 import time
@@ -41,12 +43,27 @@ class HarvesterBot(HarvesterSettings):
         if mask.nick == self.bot.nick:
             self.bot.privmsg(
                 channel, "All of your links belong to me!"
-                "(As long as you use proper sites)")
+                " (As long as you use proper sites)")
+
+    @command
+    def quit(self, mask, event, target):
+        """quit command
+
+            %%quit
+        """
+        self.bot.SIGINT()
 
     def harvest(self, mask, msg, chan):
-        """Try to harvest given url and save the file."""
         timestamp = str(int(time.time() * 1000))
-        #NOTE site harvesters should return a list of dictionaries, even if only one file has been gathered
+        paste_data = self._retrieve_content(mask, msg, chan)
+        filenames = self._archive(paste_data, timestamp, chan, mask)
+        self.bot.privmsg(
+            chan, "^ Archived file(s): {} ^".format(" ".join(filenames)))
+
+    def _retrieve_content(self, mask, msg, chan):
+        """Try to harvest given url and save the file."""
+        # NOTE site harvesters should return a list of dictionaries, even if
+        # only one file has been gathered
         # try to match url against known services
         for regex, get_content in self.service_regex_dict.items():
             m = re.match(regex, msg)
@@ -54,15 +71,19 @@ class HarvesterBot(HarvesterSettings):
                 continue
             paste_data = get_content(m.group(0))
 
-        # either no regex was found to match or no content could be pulled
-        if "paste_data" not in locals() or paste_data is None:
-            return
-        #NOTE paste_data is a list of dictionaries
+        # weird phrasing due to paste_data possibly being unknown
+        return None if "paste_data" not in locals() else paste_data
+
+    def _archive(self, paste_data, timestamp, chan, mask):
+        """ Simply fetches from a hoster and returns list of content data """
         filenames = []
+        #NOTE paste_data is a list of dictionaries
         for data in paste_data:
-            data['mask'] = mask
-            save(data, timestamp, self.archive_path)
+            try:
+                data['mask'] = str(mask)
+            except Exception:
+                print("Something went wrong with", data)
+                exit(0)
+            save(data, timestamp, self.archive_base_path)
             filenames.append(data['orig_filename'])
-        self.bot.privmsg(
-            chan, "^ Archived file(s): {} ^".format(" ".join(filenames)))
-        return True
+        return filenames
