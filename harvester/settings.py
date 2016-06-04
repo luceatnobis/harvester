@@ -1,3 +1,6 @@
+import os
+from irc3 import utils
+
 from harvester import gyazo
 from harvester import imgur
 from harvester import ppomf
@@ -23,43 +26,29 @@ class Settings(object):
                 dct[key] = value
         return dct
 
-
-class BotSettings(Settings):
-    nick = 'whoreBot'
-    host = 'irc.freenode.net'
-    port = 6697
-    ssl = True
-
-    includes = [
-        'irc3.plugins.core',
-        'irc3.plugins.command',
-        'irc3.plugins.human',
-        '__main__'
-    ]
-
-    autojoins = [
-        '#brotherBot'
-    ]
-
-
 class HarvesterSettings(Settings):
+
+    # to put logs in bot folder, not ~/irc3 or some shit
+    bot_basedir = os.path.split(os.path.dirname(__file__))[0]
 
     harvested_channels = [
         '#brotherBot'
     ]
 
-    archive_path = [environ['HOME'], 'archive']
+    archive_base_path = os.path.join(bot_basedir, 'archive')
+
     service_regex_dict = {
-        '^https?://pastebin\.com/(raw\.php\?i=)?[a-zA-Z0-9]+': pastebin.get_content,
-        '^https?://p\.pomf\.se/[\d.]+': ppomf.get_content,
-        '^https?://(?:infotomb\.com|itmb\.co)/[0-9a-zA-Z.]+': infotomb.get_content,
+        "^https?://pastebin\.com/((raw\.php\?i=)|(raw/))?[A-Za-z0-9]+": pastebin.get_content,
+        # those are unfortunately dead :( RIP
+        # '^https?://p\.pomf\.se/[\d.]+': ppomf.get_content,
+        # '^https?://(?:infotomb\.com|itmb\.co)/[0-9a-zA-Z.]+': infotomb.get_content,
         '^https?://prntscr\.com/[0-9a-zA-Z]+': prntscrn.get_content,
         # dpaste doesnt get along with https, so we're not gonna bother
-        '^http://dpaste\.com/[0-9a-zA-Z]+': dpaste.get_content,
+        '^http://dpaste\.com/[0-9a-zA-Z]+(.txt)?': dpaste.get_content,
         '^https?://bpaste\.net/(raw|show)/[0-9a-zA-Z]+': bpaste.get_content,
-        '^https?://hastebin\.com/(raw/[a-z]+)|([a-z]+\.hs)': hastebin.get_content,
+        '^https?://hastebin.com/([a-z]+(\.[a-z]+)|(raw/[a-z]+)|([a-z]+))': hastebin.get_content,
         # here come the image hosters
         '^https?://(i\.)?cubeupload\.com/(im/)?[a-zA-Z0-9.]+': cubeupload.get_content,
-        '^https?://(i\.)?imgur\.com/(gallery/)?[a-zA-Z0-9.,]+': imgur.get_content,
-        '^https?://(cache\.|i\.)?gyazo.com/[a-z0-9]{32}(\.png)?': gyazo.get_content
+        '^https?://(cache\.|i\.)?gyazo.com/[a-z0-9]{32}(\.png)?': gyazo.get_content,
+        '^https?://(i\.)?imgur\.com/(a/|gallery/)?[a-zA-Z0-9.,]+': imgur.get_content,
     }

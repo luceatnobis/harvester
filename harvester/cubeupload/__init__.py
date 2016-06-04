@@ -5,7 +5,9 @@ def get_content(url):
     paste_info = {
         'site': 'cubeupload',
     }
-    m = re.match('^.*om(?:/(im))?/([0-9a-zA-Z]+)\.([a-zA-Z0-9]+)$',url) # note that cubeupload enforces file extensions
+    # note that cubeupload enforces file extensions
+    m = re.match('^.*om(?:/(im))?/([0-9a-zA-Z]+)\.([a-zA-Z0-9]+)$',url) 
+
     if m.group(1) == 'im':
         url = 'http://i.cubeupload.com/' + m.group(2) + '.' + m.group(3)
         paste_info['extension'] = m.group(3)
@@ -17,8 +19,4 @@ def get_content(url):
     paste_info['ext'] = m.group(3)
     paste_info['orig_filename'] = m.group(2)
     paste_info['content'] = response.content
-    return paste_info
-'''
-url = 'http://cubeupload.com/im/P7XnyV.jpg'
-print get_content(url)
-'''
+    return [paste_info]
