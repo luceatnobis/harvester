@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-import re
-import pdb
 import requests
 import grequests
 import imgurpython
@@ -17,11 +15,8 @@ except ImportError:
 
 from bs4 import BeautifulSoup
 
-def get_content(url):
-    collection_fun = {
-        'a': None, 'gallery': None
-    }
 
+def get_content(url):
     split = urlsplit(url)
     path_elements = [x for x in split.path.split("/") if x]
 
@@ -36,10 +31,11 @@ def get_content(url):
             links = [x.link for x in client.get_album_images(content_id)]
             rs = (grequests.get(x) for x in links)
             res = grequests.map(rs)
-            info = mk_pasteinfo(*[(x, url) for x, url in zip(res, rep(url))])
+            info = mk_pasteinfo(*[(x, u) for x, u in zip(res, rep(url))])
             for paste, r in zip(info, res):
                 paste['content'] = r.content
             return info
+
 
 def retrieve_single(url):
     paste_info = {
@@ -65,6 +61,7 @@ def retrieve_single(url):
     paste_info[0]['content'] = response.content
     return paste_info
 
+
 def mk_pasteinfo(*args):
     info = list()
     paste_info = {
@@ -80,22 +77,3 @@ def mk_pasteinfo(*args):
         info.append(paste_info)
 
     return info
-
-    """
-    if not m.group(2):
-        soup = BeautifulSoup(response.text)
-        url1 =  soup.find('meta', {'property': 'og:image'})['content']
-        m = re.match('^.*com/([0-9a-zA-Z]+)\.([a-zA-Z]+)$',url1)
-        response = requests.get(url1)
-        if response.status_code != 200:
-            return
-
-    paste_info['ext'] = m.group(2)
-    paste_info['orig_filename'] = m.group(1)
-    paste_info['content'] = response.content
-    return paste_info
-    """
-'''
-url = 'http://imgur.com/gallery/aChgMdG'
-print get_content(url)
-'''

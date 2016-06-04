@@ -1,17 +1,14 @@
 import os
-from irc3 import utils
+# from irc3 import utils
 
 from harvester import gyazo
 from harvester import imgur
-from harvester import ppomf
 from harvester import bpaste
 from harvester import dpaste
-from harvester import infotomb
 from harvester import prntscrn
 from harvester import hastebin
 from harvester import pastebin
 from harvester import cubeupload
-from os import environ
 
 
 class Settings(object):
@@ -25,6 +22,7 @@ class Settings(object):
             if not key.startswith('__') and not callable(key):
                 dct[key] = value
         return dct
+
 
 class HarvesterSettings(Settings):
 

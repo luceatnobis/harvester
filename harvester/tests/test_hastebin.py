@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 #-*- coding: utf-8 -*-
 
-import pdb
 import hashlib
 import unittest
 
@@ -19,7 +18,7 @@ class HastebinTest(unittest.TestCase):
     def test_fetch_hastebin_regular_ext(self):
         msg = "http://hastebin.com/vohayuzodu.vala"
         test_hash = "9b4be043ed07098e9ab2d4ea5a86c504"
-        
+
         c = self.h._retrieve_content(self.h, self.mask, msg, self.chan)
         md5 = hashlib.md5()
         md5.update(c[0]['content'])
@@ -28,7 +27,7 @@ class HastebinTest(unittest.TestCase):
     def test_fetch_hastebin_regular_noext(self):
         msg = "http://hastebin.com/vohayuzodu"
         test_hash = "9b4be043ed07098e9ab2d4ea5a86c504"
-        
+
         c = self.h._retrieve_content(self.h, self.mask, msg, self.chan)
 
         md5 = hashlib.md5()
@@ -38,7 +37,7 @@ class HastebinTest(unittest.TestCase):
     def test_fetch_hastebin_raw(self):
         msg = "http://hastebin.com/raw/vohayuzodu"
         test_hash = "9b4be043ed07098e9ab2d4ea5a86c504"
-        
+
         c = self.h._retrieve_content(self.h, self.mask, msg, self.chan)
 
         md5 = hashlib.md5()

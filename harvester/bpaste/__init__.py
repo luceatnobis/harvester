@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import pdb
 import requests
 
 
@@ -13,7 +12,7 @@ def get_content(url):
     # NOTE: http://stackoverflow.com/a/18579484/3716299
     base_url = "https://bpaste.net/raw/%s"
     paste_id = url.split('/')[-1]
-    
+
     content_url = base_url % paste_id
 
     response = requests.get(content_url)

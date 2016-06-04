@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 #-*- coding: utf-8 -*-
 
-import pdb
 import hashlib
 import unittest
 
@@ -20,7 +19,6 @@ class PastebinTest(unittest.TestCase):
         msg = "http://prntscr.com/5o2enp"
         test_hash = "f6585b7b71fd56e759f6b95ff0e8f20f"
 
-        
         c = self.h._retrieve_content(self.h, self.mask, msg, self.chan)
 
         md5 = hashlib.md5()

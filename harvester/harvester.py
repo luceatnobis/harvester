@@ -1,10 +1,10 @@
+import re
 import irc3
-import pdb
+import time
+
 from irc3.plugins.command import command
 from harvester.settings import HarvesterSettings
 from harvester.utils import urlReg, save
-import time
-import re
 
 
 @irc3.plugin

@@ -2,7 +2,6 @@ import re
 import requests
 from bs4 import BeautifulSoup
 
-import pdb
 
 def get_content(url):
 
@@ -16,8 +15,8 @@ def get_content(url):
 
     data = response.text
     soup = BeautifulSoup(data)
-    url =  soup.find('meta', {'property': 'og:image'})['content']
-    
+    url = soup.find('meta', {'property': 'og:image'})['content']
+
     param_str_raw = url[url.index('?')+1:]
     params = {k: v for (k, v) in (
         kv.split('=') for kv in param_str_raw.split('&'))}
@@ -31,8 +30,3 @@ def get_content(url):
     paste['orig_filename'] = m.group(1)
     paste['ext'] = m.group(2)
     return [paste]
-
-"""
-url = 'http://prntscr.com/5ow1aq'
-print get_content(url)
-"""

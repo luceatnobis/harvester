@@ -1,5 +1,4 @@
 import os
-import pdb
 import sqlite3
 
 
@@ -54,19 +53,3 @@ class DataBs:
         else:
             self.curse.execute("SELECT hash, filename, count FROM harvs WHERE hash=?", [hash])
             return [i for i in self.curse.fetchone()]
-
-#
-'''
-d = {
-            'hash': 'faf0e9ab400ef5a7e1a9ea55277fa559',
-            'filename': '1414478734164',
-            'count':  1
-    }
-with DataBs() as dbs:
-    print check(d['hash'])
-    dbs.set(d)
-    dbs.upCount(d['hash'])
-    print check(d['hash'])
-    print dbs.gibData(d['hash'])
-    print 'kek'
-'''

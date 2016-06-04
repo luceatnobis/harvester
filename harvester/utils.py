@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 # -+- coding: utf-8 -*-
+import re
 import json
 import hashlib
-import re
+
 from os import path, makedirs, SEEK_CUR
 
 from harvester import libDataBs
@@ -15,10 +16,6 @@ def getOrCreatePath(archive_base_path):
 
 def setUpDir(site, archive_base_path):
     """Prepare directory and json path for download."""
-    """
-    archive_dir = path.join(*archive_base_path)
-    archive_json = path.join(archive_dir, "archive.json")
-    """
     archive_json = path.join(archive_base_path, "archive.json")
     final_dir = path.join(archive_base_path, site)
     getOrCreatePath(final_dir)
@@ -41,7 +38,6 @@ def appendToJson(data, file):
 
 
 def save(data, timestamp, archive_base_path):
-    import pdb
     """Save given data into specified environment."""
     # prepare directory
     final_dir, archive_json = setUpDir(data['site'], archive_base_path)
@@ -61,7 +57,8 @@ def save(data, timestamp, archive_base_path):
             # save the file
             with open(file_location, 'wb') as f:
                 f.write(data['content'])
-            db.insertData({'hash': data['md5'], 'filename': filename, 'count': 1})
+            db.insertData(
+                {'hash': data['md5'], 'filename': filename, 'count': 1})
         else:
             # just update the count
             db.upCount(data['md5'])

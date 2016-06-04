@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 import requests
 import re
+
+
 def get_content(url):
     paste_info = {
         'site': 'cubeupload',
     }
     # note that cubeupload enforces file extensions
-    m = re.match('^.*om(?:/(im))?/([0-9a-zA-Z]+)\.([a-zA-Z0-9]+)$',url) 
+    m = re.match('^.*om(?:/(im))?/([0-9a-zA-Z]+)\.([a-zA-Z0-9]+)$', url)
 
     if m.group(1) == 'im':
         url = 'http://i.cubeupload.com/' + m.group(2) + '.' + m.group(3)

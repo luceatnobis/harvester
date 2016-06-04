@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 #-*- coding: utf-8 -*-
 
-import pdb
 import hashlib
 import unittest
 
@@ -19,7 +18,7 @@ class GyazoTest(unittest.TestCase):
     def test_fetch_gyazo_share(self):
         msg = "https://gyazo.com/fc12a9bb2a4b92d1debef49b8279371f"
         test_hash = "fc12a9bb2a4b92d1debef49b8279371f"
-        
+
         c = self.h._retrieve_content(self.h, self.mask, msg, self.chan)
         md5 = hashlib.md5()
         md5.update(c[0]['content'])
@@ -28,7 +27,7 @@ class GyazoTest(unittest.TestCase):
     def test_fetch_gyazo_raw(self):
         msg = "https://i.gyazo.com/fc12a9bb2a4b92d1debef49b8279371f.png"
         test_hash = "fc12a9bb2a4b92d1debef49b8279371f"
-        
+
         c = self.h._retrieve_content(self.h, self.mask, msg, self.chan)
         md5 = hashlib.md5()
         md5.update(c[0]['content'])
@@ -37,7 +36,7 @@ class GyazoTest(unittest.TestCase):
     def test_fetch_gyazo_cache(self):
         msg = "https://cache.gyazo.com/fc12a9bb2a4b92d1debef49b8279371f.png"
         test_hash = "fc12a9bb2a4b92d1debef49b8279371f"
-        
+
         c = self.h._retrieve_content(self.h, self.mask, msg, self.chan)
         md5 = hashlib.md5()
         md5.update(c[0]['content'])

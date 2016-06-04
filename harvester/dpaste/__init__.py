@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import pdb
 import requests
 
 
@@ -18,7 +17,7 @@ def get_content(url):
     response = requests.get(content_url)
     if response.status_code != 200:
         return
-        
+
     paste_info['ext'] = ""
     paste_info['orig_filename'] = paste_id
     paste_info['content'] = response.content
