@@ -1,3 +1,4 @@
+import os
 import re
 import irc3
 import time
@@ -42,8 +43,8 @@ class HarvesterBot(HarvesterSettings):
             self, mask=None, event=None, target=None, data=None, channel=None):
         if mask.nick == self.bot.nick:
             self.bot.privmsg(
-                channel, "All of your links belong to me!"
-                " (As long as you use proper sites)")
+                channel, "All of your links belong to me! "
+                "(As long as you use proper sites)")
 
     @command
     def quit(self, mask, event, target):
@@ -53,12 +54,21 @@ class HarvesterBot(HarvesterSettings):
         """
         self.bot.SIGINT()
 
-    def harvest(self, mask, msg, chan):
-        timestamp = str(int(time.time() * 1000))
-        paste_data = self._retrieve_content(mask, msg, chan)
-        filenames = self._archive(paste_data, timestamp, chan, mask)
-        self.bot.privmsg(
-            chan, "^ Archived file(s): {} ^".format(" ".join(filenames)))
+    @irc3.event(
+        r'(@(?P<tags>\S+) )?:(?P<ns>NickServ)!NickServ@services.'
+        r' NOTICE (?P<nick>harvester) :This nickname is registered.*'
+    )
+    def register(self, ns=None, nick=None, **kw):
+        with open(os.path.join('harvester', 'nickserv_pass')) as f:
+            p = f.read().rstrip()
+        self.bot.privmsg(ns, 'identify %s %s' % (nick, p))
+
+        def harvest(self, mask, msg, chan):
+            timestamp = str(int(time.time() * 1000))
+            paste_data = self._retrieve_content(mask, msg, chan)
+            filenames = self._archive(paste_data, timestamp, chan, mask)
+            self.bot.privmsg(
+                chan, "^ Archived file(s): {} ^".format(" ".join(filenames)))
 
     def _retrieve_content(self, mask, msg, chan):
         """Try to harvest given url and save the file."""
