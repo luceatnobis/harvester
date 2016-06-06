@@ -14,7 +14,6 @@ class HarvesterBot(HarvesterSettings):
         'irc3.plugins.core',
         'irc3.plugins.userlist',
         'irc3.plugins.command',
-        'irc3.plugins.human',
     ]
 
     def __init__(self, bot):
