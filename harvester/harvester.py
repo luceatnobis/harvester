@@ -45,6 +45,7 @@ class HarvesterBot(HarvesterSettings):
                 channel, "All your links are belong to us! "
                 "(As long as you use proper sites)")
 
+    '''
     @command
     def quit(self, mask, event, target):
         """quit command
@@ -52,6 +53,7 @@ class HarvesterBot(HarvesterSettings):
             %%quit
         """
         self.bot.SIGINT()
+    '''
 
     @irc3.event(
         r'(@(?P<tags>\S+) )?:(?P<ns>NickServ)!NickServ@services.'

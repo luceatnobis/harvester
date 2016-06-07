@@ -6,7 +6,7 @@ import imgurpython
 
 from itertools import repeat as rep
 
-from . import imgur_key
+from . import key_imgur
 
 try:
     from urlparse import urlsplit
