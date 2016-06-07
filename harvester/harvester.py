@@ -62,12 +62,12 @@ class HarvesterBot(HarvesterSettings):
             p = f.read().rstrip()
         self.bot.privmsg(ns, 'identify %s %s' % (nick, p))
 
-        def harvest(self, mask, msg, chan):
-            timestamp = str(int(time.time() * 1000))
-            paste_data = self._retrieve_content(mask, msg, chan)
-            filenames = self._archive(paste_data, timestamp, chan, mask)
-            self.bot.privmsg(
-                chan, "^ Archived file(s): {} ^".format(" ".join(filenames)))
+    def harvest(self, mask, msg, chan):
+        timestamp = str(int(time.time() * 1000))
+        paste_data = self._retrieve_content(mask, msg, chan)
+        filenames = self._archive(paste_data, timestamp, chan, mask)
+        self.bot.privmsg(
+            chan, "^ Archived file(s): {} ^".format(" ".join(filenames)))
 
     def _retrieve_content(self, mask, msg, chan):
         """Try to harvest given url and save the file."""
@@ -93,6 +93,6 @@ class HarvesterBot(HarvesterSettings):
             except Exception:
                 print("Something went wrong with", data)
                 exit(0)
-            save(data, timestamp, self.archive_base_path)
+            save(data, timestamp)
             filenames.append(data['orig_filename'])
         return filenames

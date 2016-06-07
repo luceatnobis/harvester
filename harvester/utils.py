@@ -37,7 +37,7 @@ def appendToJson(data, file):
         fj.write(b)
 
 
-def save(data, timestamp, archive_base_path):
+def save(data, timestamp):
     """Save given data into specified environment."""
     # prepare directory
     final_dir, archive_json = setUpDir(data['site'], archive_base_path)
@@ -51,7 +51,7 @@ def save(data, timestamp, archive_base_path):
     data['location'] = file_location
 
     # check if we already downloaded the file
-    with libDataBs.DataBs(data={'archive_dir': archive_base_path}) as db:
+    with libDataBs.DataBs() as db:
         print(db.gibData(data['md5']))
         if not db.checkHashExistence(data['md5']):
             # save the file
