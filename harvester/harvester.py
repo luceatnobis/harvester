@@ -93,6 +93,6 @@ class HarvesterBot(HarvesterSettings):
             except Exception:
                 print("Something went wrong with", data)
                 exit(0)
-            save(data, timestamp)
+            save(data, timestamp, self.archive_path)
             filenames.append(data['orig_filename'])
         return filenames

@@ -1,5 +1,4 @@
 import os
-# from irc3 import utils
 
 from harvester import gyazo
 from harvester import imgur
@@ -26,14 +25,16 @@ class Settings(object):
 
 class HarvesterSettings(Settings):
 
+    """
     # to put logs in bot folder, not ~/irc3 or some shit
     bot_basedir = os.path.split(os.path.dirname(__file__))[0]
+    archive_base_path = os.path.join(bot_basedir, 'archive')
+    """
+    archive_path = os.path.join(os.environ['HOME'], 'archive')
 
     harvested_channels = [
         '#brotherBot'
     ]
-
-    archive_base_path = os.path.join(bot_basedir, 'archive')
 
     service_regex_dict = {
         "^https?://pastebin\.com/((raw\.php\?i=)|(raw/))?[A-Za-z0-9]+": pastebin.get_content,

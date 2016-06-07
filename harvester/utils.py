@@ -37,10 +37,10 @@ def appendToJson(data, file):
         fj.write(b)
 
 
-def save(data, timestamp):
+def save(data, timestamp, path_):
     """Save given data into specified environment."""
     # prepare directory
-    final_dir, archive_json = setUpDir(data['site'], archive_base_path)
+    final_dir, archive_json = setUpDir(data['site'], path_)
 
     # prepare filename and location
     data['md5'] = hashlib.md5(data['content']).hexdigest()
