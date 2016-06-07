@@ -32,6 +32,7 @@ def get_content(url):
             rs = (grequests.get(x) for x in links)
             res = grequests.map(rs)
             info = mk_pasteinfo(*[(x, u) for x, u in zip(res, rep(url))])
+
             for paste, r in zip(info, res):
                 paste['content'] = r.content
             return info
@@ -64,10 +65,10 @@ def retrieve_single(url):
 
 def mk_pasteinfo(*args):
     info = list()
-    paste_info = {
-        'site': 'imgur',
-    }
     for rs in args:
+        paste_info = {
+            'site': 'imgur',
+        }
         response, url = rs
         content_url = response.url
         orig_filename, ext = content_url.split("/")[-1].split(".")
