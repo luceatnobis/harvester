@@ -42,7 +42,7 @@ class HarvesterBot(HarvesterSettings):
             self, mask=None, event=None, target=None, data=None, channel=None):
         if mask.nick == self.bot.nick:
             self.bot.privmsg(
-                channel, "All of your links belong to me! "
+                channel, "All your links are belong to us! "
                 "(As long as you use proper sites)")
 
     @command
