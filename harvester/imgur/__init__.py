@@ -32,6 +32,8 @@ def get_content(url):
         particle, content_id = path_elements[:2]
         if particle == 'a' or particle == 'gallery':
             links = [x.link for x in client.get_album_images(content_id)]
+            if len(links) > 200:
+                return None
             rs = (grequests.get(x) for x in links)
             res = grequests.map(rs)
             info = mk_pasteinfo(*[(x, u) for x, u in zip(res, rep(url))])
