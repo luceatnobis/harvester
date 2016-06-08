@@ -60,8 +60,9 @@ class HarvesterBot(HarvesterSettings):
         r' NOTICE (?P<nick>harvester) :This nickname is registered.*'
     )
     def register(self, ns=None, nick=None, **kw):
-        np_particles = (os.environ['HOME'], '.harvester', 'nickserv_pass')
-        with open(os.path.join(np_particles)) as f:
+        np_path = os.path.join(
+            os.environ['HOME'], '.harvester', 'nickserv_pass')
+        with open(np_path) as f:
             p = f.read().rstrip()
         self.bot.privmsg(ns, 'identify %s %s' % (nick, p))
 
