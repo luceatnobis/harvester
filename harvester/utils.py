@@ -51,7 +51,7 @@ def save(data, timestamp, path_):
     data['location'] = file_location
 
     # check if we already downloaded the file
-    with libDataBs.DataBs() as db:
+    with libDataBs.DataBs(path_) as db:
         print(db.gibData(data['md5']))
         if not db.checkHashExistence(data['md5']):
             # save the file

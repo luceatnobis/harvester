@@ -22,15 +22,10 @@ class Settings(object):
                 dct[key] = value
         return dct
 
-
 class HarvesterSettings(Settings):
 
-    """
-    # to put logs in bot folder, not ~/irc3 or some shit
-    bot_basedir = os.path.split(os.path.dirname(__file__))[0]
-    archive_base_path = os.path.join(bot_basedir, 'archive')
-    """
-    archive_path = os.path.join(os.environ['HOME'], 'archive')
+    base_path = os.path.join(os.environ['HOME'], '.harvester')
+    archive_path = os.path.join(base_path, 'archive')
 
     harvested_channels = [
         '#brotherBot'

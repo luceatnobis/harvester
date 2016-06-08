@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
+import os
+import sys
 import requests
 import grequests
 import imgurpython
 
 from itertools import repeat as rep
-
-from . import key_imgur
 
 try:
     from urlparse import urlsplit
@@ -14,6 +14,9 @@ except ImportError:
     from urllib.parse import urlsplit
 
 from bs4 import BeautifulSoup
+
+sys.path.append(os.path.join(os.environ['HOME'], '.harvester'))
+import key_imgur
 
 
 def get_content(url):
@@ -24,7 +27,7 @@ def get_content(url):
         return retrieve_single(url)
     elif 1 < len(path_elements):
         client = imgurpython.ImgurClient(
-            imgur_key.cred['client-id'], imgur_key.cred['client-secret']
+            key_imgur.cred['client-id'], key_imgur.cred['client-secret']
         )
         particle, content_id = path_elements[:2]
         if particle == 'a' or particle == 'gallery':
