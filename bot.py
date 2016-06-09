@@ -1,13 +1,25 @@
 #!/usr/bin/env python3
 # -+- coding: utf-8 -*-
 
+import pdb
 import irc3
+import argparse
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--debug", action="store_true", help="Enables debug mode")
+
+    args = parser.parse_args()
+
     config = irc3.utils.parse_config('bot', 'bot.ini')
     bot = irc3.IrcBot(**config)
     bot.include('irc3.plugins.logger')
     bot.include('harvester.harvester')
+
+    if args.debug:
+        bot.nick = "harvester_debug"
+        bot.config['autojoins'] = ['#brotherBot']
     bot.run()
 
 urls = [
