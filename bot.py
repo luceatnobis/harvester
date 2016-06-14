@@ -12,16 +12,21 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    plugins = [
+        'irc3.plugins.logger',
+        'harvester.harvester',
+    ]
     config = irc3.utils.parse_config('bot', 'bot.ini')
-    bot = irc3.IrcBot(**config)
-    bot.include('harvester.harvester')
 
     if args.debug:
         pdb.set_trace()
-        bot.config['autojoins'] = ['#brotherBot']
-        bot.config['nick'] = "harvester_debug"
-    else:
-        bot.include('irc3.plugins.logger')
+        plugins.pop(0)  # remove logging for debugging
+        config['autojoins'] = ['#brotherBot']
+        config['nick'] = "harvester_debug"
+
+    bot = irc3.IrcBot(**config)
+    for p in plugins:
+        bot.include(p)
     bot.run()
 
 urls = [
