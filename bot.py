@@ -21,7 +21,7 @@ if __name__ == "__main__":
         config['nick'] = "harvester_debug"
         config['autojoins'] = ['#brotherBot']
         config['harvested_channels'] = ['#brotherBot']
-        plugins.pop()
+        plugins.pop()  # remove logging from debugging
 
     bot = irc3.IrcBot(**config)
     for p in plugins:
