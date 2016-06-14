@@ -24,7 +24,7 @@ class HarvesterBot(HarvesterSettings):
     def privmsg_trigger(self, mask=None, event=None, target=None, data=None):
         if not all([mask, event, target, data]):
             raise Exception("shits fucked up yo")
-        if target not in self.harvested_channels:
+        if target not in self.bot.config['harvested_channels']:
             return
 
         nick, user, host = self.split_mask(mask)

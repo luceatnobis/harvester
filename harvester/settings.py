@@ -27,10 +27,6 @@ class HarvesterSettings(Settings):
     base_path = os.path.join(os.environ['HOME'], '.harvester')
     archive_path = os.path.join(base_path, 'archive')
 
-    harvested_channels = [
-        '#cicadasolvers'
-    ]
-
     service_regex_dict = {
         "^https?://pastebin\.com/((raw\.php\?i=)|(raw/))?[A-Za-z0-9]+": pastebin.get_content,
         # those are unfortunately dead :( RIP
