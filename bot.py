@@ -14,12 +14,14 @@ if __name__ == "__main__":
 
     config = irc3.utils.parse_config('bot', 'bot.ini')
     bot = irc3.IrcBot(**config)
-    bot.include('irc3.plugins.logger')
     bot.include('harvester.harvester')
 
     if args.debug:
-        bot.nick = "harvester_debug"
+        pdb.set_trace()
         bot.config['autojoins'] = ['#brotherBot']
+        bot.config['nick'] = "harvester_debug"
+    else:
+        bot.include('irc3.plugins.logger')
     bot.run()
 
 urls = [
