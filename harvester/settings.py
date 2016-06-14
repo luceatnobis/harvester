@@ -28,7 +28,7 @@ class HarvesterSettings(Settings):
     archive_path = os.path.join(base_path, 'archive')
 
     harvested_channels = [
-        '#brotherBot'
+        '#cicadasolvers'
     ]
 
     service_regex_dict = {
