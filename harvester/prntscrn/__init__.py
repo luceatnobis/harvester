@@ -14,7 +14,7 @@ def get_content(url):
         return
 
     data = response.text
-    soup = BeautifulSoup(data)
+    soup = BeautifulSoup(data, "html5lib")
     url = soup.find('meta', {'property': 'og:image'})['content']
 
     param_str_raw = url[url.index('?')+1:]
