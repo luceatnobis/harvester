@@ -67,7 +67,7 @@ def retrieve_single(url):
     if "." in element:
         content_url = url
     else:
-        soup = BeautifulSoup(response.text)
+        soup = BeautifulSoup(response.text, "html5lib")
         content_url = soup.find('link', {'rel': 'image_src'})['href']
 
     response = requests.get(content_url)
