@@ -30,17 +30,25 @@ def get_content(url):
             key_imgur.cred['client-id'], key_imgur.cred['client-secret']
         )
         particle, content_id = path_elements[:2]
-        if particle == 'a' or particle == 'gallery':
+        if particle == 'a':
             links = [x.link for x in client.get_album_images(content_id)]
-            if len(links) > 200:
-                return None
-            rs = (grequests.get(x) for x in links)
-            res = grequests.map(rs)
-            info = mk_pasteinfo(*[(x, u) for x, u in zip(res, rep(url))])
+        elif particle == 'gallery':
+            g = client.gallery_item(content_id)
+            if hasattr(g, 'images'):
+                links = [x['link'] for x in g.images]
+            else:
+                links = [g.link]
 
-            for paste, r in zip(info, res):
-                paste['content'] = r.content
-            return info
+        if len(links) > 200:
+            return None
+
+        rs = (grequests.get(x) for x in links)
+        res = grequests.map(rs)
+        info = mk_pasteinfo(*[(x, u) for x, u in zip(res, rep(url))])
+
+        for paste, r in zip(info, res):
+            paste['content'] = r.content
+        return info
 
 
 def retrieve_single(url):

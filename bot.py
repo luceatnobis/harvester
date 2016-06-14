@@ -19,7 +19,6 @@ if __name__ == "__main__":
     config = irc3.utils.parse_config('bot', 'bot.ini')
 
     if args.debug:
-        pdb.set_trace()
         plugins.pop(0)  # remove logging for debugging
         config['autojoins'] = ['#brotherBot']
         config['nick'] = "harvester_debug"
