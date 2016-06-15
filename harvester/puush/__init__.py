@@ -17,6 +17,6 @@ def get_content(url):
     folder_id, filename = url.split("/")[-2:]
     paste_id, ext = filename.split(".")
     paste_info['ext'] = ext
-    paste_info['orig_filename'] = paste_id
+    paste_info['orig_filename'] = folder_id + '_' + paste_id
     paste_info['content'] = response.content
     return [paste_info]
