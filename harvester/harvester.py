@@ -67,6 +67,10 @@ class HarvesterBot(HarvesterSettings):
     def harvest(self, mask, msg, chan):
         timestamp = str(int(time.time() * 1000))
         paste_data = self._retrieve_content(mask, msg, chan)
+
+        if paste_data is None:
+            return
+
         filenames = self._archive(paste_data, timestamp, chan, mask)
         self.bot.privmsg(
             chan, "^ Archived file(s): {} ^".format(" ".join(filenames)))
