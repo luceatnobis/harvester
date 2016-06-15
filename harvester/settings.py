@@ -4,7 +4,7 @@ from harvester import gyazo
 from harvester import imgur
 from harvester import bpaste
 from harvester import dpaste
-from harvester import github
+# from harvester import github
 from harvester import sprunge
 from harvester import prntscrn
 from harvester import hastebin
@@ -40,7 +40,7 @@ class HarvesterSettings(Settings):
         '^https?://bpaste\.net/(raw|show)/[0-9a-zA-Z]+': bpaste.get_content,
         '^https?://hastebin.com/([a-z]+(\.[a-z]+)|(raw/[a-z]+)|([a-z]+))': hastebin.get_content,
         # '^https?://github.com/(.+)': github.get_content,
-        '^http?://sprunge\.us/[a-zA-Z0-9.]{4}': sprunge.get_content,
+        '^http?://sprunge\.us/[a-zA-Z0-9.]{4,7}': sprunge.get_content,
         # here come the image hosters
         '^https?://(i\.)?cubeupload\.com/(im/)?[a-zA-Z0-9.]+': cubeupload.get_content,
         '^https?://(cache\.|i\.)?gyazo.com/[a-z0-9]{32}(\.png)?': gyazo.get_content,
