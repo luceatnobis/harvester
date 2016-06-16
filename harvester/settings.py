@@ -5,7 +5,9 @@ from harvester import imgur
 from harvester import puush
 from harvester import bpaste
 from harvester import dpaste
+# from harvester import anonyws
 from harvester import sprunge
+from harvester import mixtape
 from harvester import prntscrn
 from harvester import hastebin
 from harvester import pastebin
@@ -42,7 +44,10 @@ class HarvesterSettings(Settings):
         # '^https?://github.com/(.+)': github.get_content,
         '^http?://sprunge\.us/[a-zA-Z0-9.]{4,7}': sprunge.get_content,
         # here come the image hosters
+        # '^https?://anony\.ws/(.+)': anonyws.get_content,
         '^https?://puu\.sh/[A-Za-z0-9]{5}/(.+)': puush.get_content,
+        # https://spit.mixtape.moe/view/58a37e21
+        '^https?://((my\.|spit\.)?)mixtape\.moe/(.+)': mixtape.get_content,
         '^https?://(i\.)?cubeupload\.com/(im/)?[a-zA-Z0-9.]+': cubeupload.get_content,
         '^https?://(cache\.|i\.)?gyazo.com/[a-z0-9]{32}(\.png)?': gyazo.get_content,
         '^https?://(i\.)?imgur\.com/(a/|gallery/)?[a-zA-Z0-9.,]+': imgur.get_content,

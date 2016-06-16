@@ -13,8 +13,6 @@ def get_content(url):
     # http://pastebin.com/raw/Vcz07KuK  new raw
     # http://pastebin.com/raw.php?i=Vcz07KuK  old raw
 
-    import pdb
-    pdb.set_trace()
     if "raw.php" in url:
         # dissolve the key=value pairs
         param_str_raw = url[url.index('?')+1:]
