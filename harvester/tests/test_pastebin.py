@@ -19,10 +19,7 @@ class PastebinTest(unittest.TestCase):
         msg = "http://pastebin.com/Vcz07KuK"
         test_hash = "6f200af60b8ad355f7757b8f0e3efb00"
 
-        try:
-            c = self.h._retrieve_content(self.h, self.mask, msg, self.chan)
-        except:
-            pdb.post_mortem()
+        c = self.h._retrieve_content(self.h, self.mask, msg, self.chan)
 
         md5 = hashlib.md5()
         md5.update(c[0]['content'])

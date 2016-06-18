@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import re
-import pdb
 from urllib.parse import urlsplit
 
 import requests

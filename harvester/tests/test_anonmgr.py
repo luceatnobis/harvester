@@ -17,7 +17,7 @@ class AnonmgrTest(unittest.TestCase):
 
     def test_fetch_image_share(self):
         msg = "https://anonmgur.com/?f8ed5971ae85d31823ec8557df46f5b5.jpg"
-        test_hash = "3c1a8ef650f3c3c3c2f4dd115931c0ca"
+        test_hash = "f29484cf10fe73079c37091b28b77fc4"
 
         c = self.h._retrieve_content(self.h, self.mask, msg, self.chan)
         md5 = hashlib.md5()
@@ -26,7 +26,7 @@ class AnonmgrTest(unittest.TestCase):
 
     def test_fetch_image_direct(self):
         msg = "https://anonmgur.com/up/f8ed5971ae85d31823ec8557df46f5b5.jpg"
-        test_hash = "3c1a8ef650f3c3c3c2f4dd115931c0ca"
+        test_hash = "f29484cf10fe73079c37091b28b77fc4"
 
         c = self.h._retrieve_content(self.h, self.mask, msg, self.chan)
         md5 = hashlib.md5()
