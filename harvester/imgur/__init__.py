@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 
 import os
+import re
 import sys
+import pdb
 import requests
 import grequests
 import imgurpython
@@ -30,6 +32,7 @@ def get_content(url):
             key_imgur.cred['client-id'], key_imgur.cred['client-secret']
         )
         particle, content_id = path_elements[:2]
+        content_id = re.sub("[^A-Za-z0-9]+$", "", content_id)  # removing dirt
         if particle == 'a':
             links = [x.link for x in client.get_album_images(content_id)]
         elif particle == 'gallery':
