@@ -9,6 +9,7 @@ from harvester import anonyws
 from harvester import sprunge
 from harvester import anonmgr
 from harvester import mixtape
+from harvester import postimg
 from harvester import prntscrn
 from harvester import hastebin
 from harvester import pastebin
@@ -48,6 +49,7 @@ class HarvesterSettings(Settings):
         '^https?://anony\.ws/(.+)': anonyws.get_content,
         '^https?://puu\.sh/[A-Za-z0-9]{5}/(.+)': puush.get_content,
         # https://spit.mixtape.moe/view/58a37e21
+        '^https?://(s\d+\.)?postimg\.org/(.+)': postimg.get_content,
         '^https?://anonmgur\.com/(.+)': anonmgr.get_content,
         '^https?://((my\.|spit\.)?)mixtape\.moe/(.+)': mixtape.get_content,
         '^https?://(i\.)?cubeupload\.com/(im/)?[a-zA-Z0-9.]+': cubeupload.get_content,

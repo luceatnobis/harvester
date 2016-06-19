@@ -23,7 +23,7 @@ class HarvesterBot(HarvesterSettings):
     @irc3.event(irc3.rfc.PRIVMSG)
     def privmsg_trigger(self, mask=None, event=None, target=None, data=None):
         if not all([mask, event, target, data]):
-            raise Exception("shits fucked up yo")
+            raise Exception("shits fucked yo")
         if target not in self.bot.config['harvested_channels']:
             return
 

@@ -37,18 +37,22 @@ def get_content(url):
             if hasattr(g, 'images'):
                 links = [x['link'] for x in g.images]
             else:
-                links = [g.link]
+                links = [g.link]  # we can have a gallery with only one item
 
         if len(links) > 200:
             return None
 
         rs = (grequests.get(x) for x in links)
         res = grequests.map(rs)
+
+        f = sort_func(links)  # for sorting
+        res.sort(key=f)
         info = mk_pasteinfo(*[(x, u) for x, u in zip(res, rep(url))])
 
         for paste, r in zip(info, res):
             paste['content'] = r.content
         return info
+
 
 
 def retrieve_single(url):
@@ -91,3 +95,6 @@ def mk_pasteinfo(*args):
         info.append(paste_info)
 
     return info
+
+def sort_func(all_links):
+    return lambda x: all_links.index(x.url)
