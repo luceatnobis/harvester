@@ -7,7 +7,7 @@ import unittest
 from harvester import harvester
 
 
-class CupeuploadTest(unittest.TestCase):
+class CubeuploadTest(unittest.TestCase):
 
     def setUp(self):
         self.nick = "test"
