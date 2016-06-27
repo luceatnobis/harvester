@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -+- coding: utf-8 -*-
 
+import pdb
 import irc3
 import argparse
 
@@ -15,6 +16,7 @@ if __name__ == "__main__":
     plugins = [
         'harvester.harvester',
         'irc3.plugins.logger',
+        'irc3.plugins.command',
     ]
 
     if args.debug:
@@ -24,9 +26,12 @@ if __name__ == "__main__":
         plugins.pop()  # remove logging from debugging
 
     bot = irc3.IrcBot(**config)
+
     for p in plugins:
         bot.include(p)
+
     bot.run()
+
 
 urls = [
     'https://bpaste.net/show/426fe62985e3',

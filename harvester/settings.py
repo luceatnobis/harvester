@@ -1,19 +1,19 @@
 import os
 
 from harvester import gyazo
-from harvester import imgur
+# from harvester import imgur
 from harvester import puush
 from harvester import bpaste
 from harvester import dpaste
-from harvester import anonyws
-from harvester import sprunge
 from harvester import anonmgr
+from harvester import anonyws
 from harvester import mixtape
-from harvester import postimg
+# from harvester import postimg
+from harvester import sprunge
 from harvester import prntscrn
 from harvester import hastebin
 from harvester import pastebin
-from harvester import cubeupload
+from harvester.plugins import cubeupload
 
 
 class Settings(object):
@@ -30,8 +30,11 @@ class Settings(object):
 
 class HarvesterSettings(Settings):
 
+    '''
+    db_name = 'harvester.db'
     base_path = os.path.join(os.environ['HOME'], '.harvester')
     archive_path = os.path.join(base_path, 'archive')
+    '''
 
     service_regex_dict = {
         "^https?://pastebin\.com/((raw\.php\?i=)|(raw/))?[A-Za-z0-9]+": pastebin.get_content,
@@ -49,10 +52,10 @@ class HarvesterSettings(Settings):
         '^https?://anony\.ws/(.+)': anonyws.get_content,
         '^https?://puu\.sh/[A-Za-z0-9]{5}/(.+)': puush.get_content,
         # https://spit.mixtape.moe/view/58a37e21
-        '^https?://(s\d+\.)?postimg\.org/(.+)': postimg.get_content,
+        # '^https?://(s\d+\.)?postimg\.org/(.+)': postimg.get_content,
         '^https?://anonmgur\.com/(.+)': anonmgr.get_content,
         '^https?://((my\.|spit\.)?)mixtape\.moe/(.+)': mixtape.get_content,
-        '^https?://(i\.)?cubeupload\.com/(im/)?[a-zA-Z0-9.]+': cubeupload.get_content,
+        '^https?://(i\.)?cubeupload\.com/(im/)?[a-zA-Z0-9.]+': cubeupload.CubeUpload,
         '^https?://(cache\.|i\.)?gyazo.com/[a-z0-9]{32}(\.png)?': gyazo.get_content,
-        '^https?://(i\.)?imgur\.com/(a/|gallery/)?[a-zA-Z0-9.,]+': imgur.get_content,
+        # '^https?://(i\.)?imgur\.com/(a/|gallery/)?[a-zA-Z0-9.,]+': imgur.get_content,
     }

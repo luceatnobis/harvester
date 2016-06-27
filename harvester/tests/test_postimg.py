@@ -16,7 +16,8 @@ class PostimgTest(unittest.TestCase):
         self.h = harvester.HarvesterBot
 
     def test_fetch_image_upload_page(self):
-        msg = "https://postimg.org/image/e68igfdqo/"
+        # msg = "https://postimg.org/image/e68igfdqo/"
+        msg = "https://postimg.org/image/ymd0wph53/"
         test_hash = "3c1a8ef650f3c3c3c2f4dd115931c0ca"
 
         c = self.h._retrieve_content(self.h, self.mask, msg, self.chan)

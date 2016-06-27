@@ -1,7 +1,11 @@
-import os
 import re
+import pdb
 import irc3
 import time
+import sqlite3
+
+from os import makedirs
+from os.path import join
 
 from irc3.plugins.command import command
 from harvester.settings import HarvesterSettings
@@ -10,6 +14,7 @@ from harvester.utils import urlReg, save
 
 @irc3.plugin
 class HarvesterBot(HarvesterSettings):
+
     requires = [
         'irc3.plugins.core',
         'irc3.plugins.userlist',
@@ -18,6 +23,34 @@ class HarvesterBot(HarvesterSettings):
 
     def __init__(self, bot):
         self.bot = bot
+
+        self.bot.SIGINT_backup = self.bot.SIGINT
+
+        def custom_quit():
+            self._cleanup()
+            self.bot.SIGINT_backup()
+
+        self.bot.SIGINT = custom_quit
+        pdb.set_trace()
+        
+        for k, v in self.bot.config.items():
+            if not k.startswith('py'):
+                continue
+            setattr(self, k[3:], v)
+
+        self._create_paths()
+        return
+        
+        # TODO: check paths with db object potentially
+        self.db = sqlite3.connect(join(self.archive_path, self.db_name))
+
+    def _cleanup(self):
+        print("Still cleaning up")
+        return True
+
+    def _create_paths(self):
+        for f in filter(lambda x: x.startswith('path'), vars(self)):
+            makedirs(getattr(self, f), exist_ok=True)
 
     #NOTE: https://irc3.readthedocs.org/en/latest/rfc.html
     @irc3.event(irc3.rfc.PRIVMSG)
@@ -62,6 +95,7 @@ class HarvesterBot(HarvesterSettings):
     def register(self, ns=None, nick=None, **kw):
         np_path = os.path.join(
             os.environ['HOME'], '.harvester', 'nickserv_pass')
+
         with open(np_path) as f:
             p = f.read().rstrip()
         self.bot.privmsg(ns, 'identify %s %s' % (nick, p))
@@ -82,16 +116,26 @@ class HarvesterBot(HarvesterSettings):
         # NOTE site harvesters should return a list of dictionaries, even if
         # only one file has been gathered
         # try to match url against known services
-        for regex, get_content in self.service_regex_dict.items():
+        for regex, Module in self.service_regex_dict.items():
             m = re.match(regex, msg)
             if not m:
                 continue
-            paste_data = get_content(m.group(0))
+            try:
+                paste_data = Module(m.group(0))
+            except:
+                pdb.post_mortem()
+                paste_data = get_content(m.group(0))
 
         # weird phrasing due to paste_data possibly being unknown
         return None if "paste_data" not in locals() else paste_data
 
-    def _archive(self, paste_data, timestamp, chan, mask):
+    def _archive(self, klass, timestamp, chan, mask):
+        pdb.set_trace()
+        for data in klass:
+            pass
+
+        '''
+    def _archive(self, paste_data, timestamp, chan, mask, db=None):
         """ Simply fetches from a hoster and returns list of content data """
         filenames = []
         #NOTE paste_data is a list of dictionaries
@@ -104,3 +148,4 @@ class HarvesterBot(HarvesterSettings):
             save(data, timestamp, self.archive_path)
             filenames.append(data['orig_filename'])
         return filenames
+        '''

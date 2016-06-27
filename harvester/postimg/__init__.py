@@ -20,11 +20,16 @@ def get_content(url):
     path_elements = [x for x in split.path.split("/") if x]
 
     response = requests.get(url)
+    if not response.ok:
+        return
     if path_elements[0] == "image":
         # https://postimg.org/image/e68igfdqo/
         # https://postimg.org/image/85atjcr4h/ (upload and image page)
         soup = BeautifulSoup(response.text, "html5lib")
-        links = soup.find('input', {'id': 'code_hotlink'}).get('value')
+        try:
+            links = soup.find('input', {'id': 'code_hotlink'}).get('value')
+        except:
+            pdb.set_trace()
         info = process_dl_link(url, *[links])
     elif path_elements[0] == "gallery":
         # https://postimg.org/gallery/380x4rxc2/
