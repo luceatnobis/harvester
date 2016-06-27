@@ -21,7 +21,7 @@ def get_content(url):
         paste_id = fragments.path.split("/")[-1]
         content_url = spit_base_url + paste_id
     elif subdomain == "my":  # we have other content
-        paste_id, ext = fragments.path.split("/")[-1].split(".")
+        paste_id, ext = fragments.path.split("/", 1)[-1].split(".", 1)
         content_url = url
     else:
         return
