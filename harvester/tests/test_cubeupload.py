@@ -3,11 +3,11 @@
 
 import unittest
 
-from . import testing
+from . import testutils
 from harvester import harvester
 
 
-class CubeuploadTest(testing.BotTestCase):
+class CubeuploadTest(testutils.BotTestCase):
 
     def setUp(self):
 

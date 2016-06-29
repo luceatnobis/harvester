@@ -31,7 +31,6 @@ class HarvesterBot(HarvesterSettings):
             self.bot.SIGINT_backup()
 
         self.bot.SIGINT = custom_quit
-        pdb.set_trace()
         
         for k, v in self.bot.config.items():
             if not k.startswith('py'):
@@ -39,10 +38,9 @@ class HarvesterBot(HarvesterSettings):
             setattr(self, k[3:], v)
 
         self._create_paths()
-        return
         
         # TODO: check paths with db object potentially
-        self.db = sqlite3.connect(join(self.archive_path, self.db_name))
+        # self.db = sqlite3.connect(join(self.archive_path, self.db_name))
 
     def _cleanup(self):
         print("Still cleaning up")

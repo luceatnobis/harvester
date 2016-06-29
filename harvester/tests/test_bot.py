@@ -8,11 +8,11 @@ import shutil
 import unittest
 import tempfile
 
-from . import testing
 from harvester import harvester
+from harvester.tests import testutils
 
 
-class BotTest(testing.BotTestCase):
+class BotTest(testutils.BotTestCase):
 
     def setUp(self):
         self.nick = "padfoot"

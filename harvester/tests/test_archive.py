@@ -6,40 +6,43 @@ import irc3
 import sqlite3
 import unittest
 
-from . import testing
-from harvester.plugins import *
 from harvester import harvester
+from harvester.tests.testutils import HarvesterTest, BotTestCase
+# from harvester.plugins import *
 
 
-class DatabaseTest(testing.BotTestCase):
+class DatabaseTest(BotTestCase):
 
     def setUp(self):
-        self.nick = "padfoot"
-        self.chan = '#chan'
-        self.mask = "brotherBox!~brotherBo@unaffiliated/brotherbox"
 
         config = irc3.utils.parse_config('bot', 'bot.ini')
         self.bot = self.callFTU(**config)
-        self.bot.include('harvester.harvester')
 
-        self.plugin = self.bot.get_plugin('harvester.harvester.HarvesterBot')
+        self.bot.include('harvester.tests.testutils')
+
+        """
+        self.plugin = self.bot.get_plugin(
+            'harvester.tests.testutils.HarvesterTest')
         self.plugin.db.close()
 
         self.plugin.db = sqlite3.connect(':memory:')
+        """
 
     def test_what(self):
+        pass
+        """
         c = cubeupload.CubeUpload('http://cubeupload.com/im/YhUxlj.jpg')
         c.store_content()
         pdb.set_trace()
         for l in c:
             del l['content']
             print(l)
+        """
 
+    """
     def tearDown(self):
         self.plugin.db.close()
-
-    def test_db(self):
-        pass
+    """
 
 if __name__ == '__main__':
     unittest.main()
