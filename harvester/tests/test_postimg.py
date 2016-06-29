@@ -15,15 +15,6 @@ class PostimgTest(unittest.TestCase):
         self.mask = "brotherBox!~brotherBo@unaffiliated/brotherbox"
         self.h = harvester.HarvesterBot
 
-    def test_fetch_image_upload_page(self):
-        msg = "https://postimg.org/image/e68igfdqo/"
-        test_hash = "3c1a8ef650f3c3c3c2f4dd115931c0ca"
-
-        c = self.h._retrieve_content(self.h, self.mask, msg, self.chan)
-        md5 = hashlib.md5()
-        md5.update(c[0]['content'])
-        self.assertEqual(md5.hexdigest(), test_hash)
-
     def test_fetch_image_page(self):
         msg = "https://postimg.org/image/85atjcr4h"
         test_hash = "3c1a8ef650f3c3c3c2f4dd115931c0ca"
@@ -32,7 +23,6 @@ class PostimgTest(unittest.TestCase):
         md5 = hashlib.md5()
         md5.update(c[0]['content'])
         self.assertEqual(md5.hexdigest(), test_hash)
-
 
     def test_fetch_image_link_download(self):
         msg = "https://s32.postimg.org/j4w0uyhjn/carlton.png"

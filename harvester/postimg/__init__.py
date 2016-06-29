@@ -1,7 +1,6 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # NOTE: please don't ever ask questions about this code.
 
-import pdb
 import requests
 import grequests
 
