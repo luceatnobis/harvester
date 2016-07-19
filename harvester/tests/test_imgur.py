@@ -1,114 +1,192 @@
 #!/usr/bin/env python3
-#-*- coding: utf-8 -*-
 
-import hashlib
+import pdb
 import unittest
 
-from harvester import harvester
+from os.path import join
+
+from harvester.plugins.imgur import Imgur
 
 
-class ImgurTest(unittest.TestCase):
+class ImgurTestSingle(unittest.TestCase):
 
     def setUp(self):
-        self.nick = "test"
-        self.chan = '#brotherBot'
-        self.mask = "brotherBox!~brotherBo@unaffiliated/brotherbox"
-        self.h = harvester.HarvesterBot
+        self.test_dict = [{
+            'collection': None,
+            'content_id': 'e1yYXUU',
+            'content_url': 'https://i.imgur.com/e1yYXUU.jpg',
+            'content_hash': 'c2002691d4cd350aca016a982983ce0a',
+        }]
 
     def test_fetch_imgur_share(self):
         msg = "https://imgur.com/e1yYXUU"
-        test_hash = "c2002691d4cd350aca016a982983ce0a"
 
-        c = self.h._retrieve_content(self.h, self.mask, msg, self.chan)
-        md5 = hashlib.md5()
-        md5.update(c[0]['content'])
-        self.assertEqual(md5.hexdigest(), test_hash)
+        klass = Imgur(msg)
+        klass.get_content()
+        for i, m in enumerate(klass):
+            d = self.test_dict[i]
+            [self.assertEquals(v, m[k]) for k, v in d.items()]
 
     def test_fetch_imgur_image_no_i(self):
         msg = "https://imgur.com/e1yYXUU.jpg"
-        test_hash = "c2002691d4cd350aca016a982983ce0a"
-
-        c = self.h._retrieve_content(self.h, self.mask, msg, self.chan)
-        md5 = hashlib.md5()
-        md5.update(c[0]['content'])
-        self.assertEqual(md5.hexdigest(), test_hash)
+        klass = Imgur(msg)
+        klass.get_content()
+        for i, m in enumerate(klass):
+            d = self.test_dict[i]
+            [self.assertEquals(v, m[k]) for k, v in d.items()]
 
     def test_fetch_imgur_raw_image(self):
         msg = "https://i.imgur.com/e1yYXUU.jpg"
-        test_hash = "c2002691d4cd350aca016a982983ce0a"
+        klass = Imgur(msg)
+        klass.get_content()
+        for i, m in enumerate(klass):
+            d = self.test_dict[i]
+            [self.assertEquals(v, m[k]) for k, v in d.items()]
 
-        c = self.h._retrieve_content(self.h, self.mask, msg, self.chan)
-        md5 = hashlib.md5()
-        md5.update(c[0]['content'])
-        self.assertEqual(md5.hexdigest(), test_hash)
+    def test_path_single(self):
+        msg = "https://imgur.com/e1yYXUU"
+        klass = Imgur(msg)
+        self.assertEquals(klass.return_path(), 'imgur')
+        
+
+class ImgurTestComma(unittest.TestCase):
+
+    def test_fetch_imgur_share_comma(self):
+        test_dict = [{
+            'collection': None,
+            'content_id': 'yK2C3KZ',
+            'content_url': 'https://i.imgur.com/yK2C3KZ.png',
+            'content_hash': 'b1867f10a1c3fb93b3280515b202d0ac',
+        }, {
+            'collection': None,
+            'content_id': 'qn3HVUT',
+            'content_url': 'https://i.imgur.com/qn3HVUT.jpg',
+            'content_hash': '859be87b32d4eefdcbef391bb63faee5',
+        }, {
+            'collection': None,
+            'content_id': 'GfbYRhJ',
+            'content_url': 'https://i.imgur.com/GfbYRhJ.png',
+            'content_hash': '5b2463266f958a5041cde08c594a040f',
+        }]
+
+        msg = "https://imgur.com/yK2C3KZ,qn3HVUT,GfbYRhJ"
+
+        klass = Imgur(msg)
+        klass.get_content()
+
+        self.assertEquals(klass.items, 3)
+        for i, m in enumerate(klass):
+            d = test_dict[i]
+            [self.assertEquals(v, m[k]) for k, v in d.items()]
+
+    def test_path_comma(self):
+        msg = "https://imgur.com/yK2C3KZ,qn3HVUT,GfbYRhJ"
+        klass = Imgur(msg)
+        self.assertEquals(klass.return_path(), 'imgur')
+
+
+class ImgurTestA(unittest.TestCase):
+
+    def setUp(self):
+        self.test_dict = [{
+            'site': 'imgur',
+            'collection': 'Tkx0P',
+            'content_id': 'HMk3d7r',
+            'content_url': 'https://i.imgur.com/HMk3d7r.png',
+            'content_hash': '037c2962e627cdfd347528445e383cd7',
+        }, {
+            'site': 'imgur',
+            'collection': 'Tkx0P',
+            'content_id': 'Mq3eWP5',
+            'content_url': 'https://i.imgur.com/Mq3eWP5.png',
+            'content_hash': '98a6b2f27d27d712ff430ac980cbfb48',
+        }, {
+            'site': 'imgur',
+            'collection': 'Tkx0P',
+            'content_id': 'WK8jjDp',
+            'content_url': 'https://i.imgur.com/WK8jjDp.png',
+            'content_hash': '8a4a37f78a1a3e593a61ab231ce93ed7',
+        }, {
+            'site': 'imgur',
+            'collection': 'Tkx0P',
+            'content_id': 'HFXxTMp',
+            'content_url': 'https://i.imgur.com/HFXxTMp.png',
+            'content_hash': 'c63ff1c939582db2023dd7bc49fd76be',
+        }, {
+        }]
 
     def test_fetch_imgur_a(self):
         msg = "https://imgur.com/a/Tkx0P"
-        hashes = [
-            "037c2962e627cdfd347528445e383cd7",
-            "98a6b2f27d27d712ff430ac980cbfb48",
-            "8a4a37f78a1a3e593a61ab231ce93ed7",
-            "c63ff1c939582db2023dd7bc49fd76be",
-        ]
 
-        c = self.h._retrieve_content(self.h, self.mask, msg, self.chan)
-        self.assertEqual(4, len(c))
-
-        for c_hash in c:
-            md5 = hashlib.md5()
-            md5.update(c_hash['content'])
-            self.assertTrue(md5.hexdigest() in hashes)
+        klass = Imgur(msg)
+        klass.get_content()
+        self.assertEquals(4, klass.items)
+        for i, m in enumerate(klass):
+            d = self.test_dict[i]
+            [self.assertEquals(v, m[k]) for k, v in d.items()]
 
     def test_fetch_imgur_a_contaminated(self):
         msg = "https://imgur.com/a/Tkx0P,"
-        hashes = [
-            "037c2962e627cdfd347528445e383cd7",
-            "98a6b2f27d27d712ff430ac980cbfb48",
-            "8a4a37f78a1a3e593a61ab231ce93ed7",
-            "c63ff1c939582db2023dd7bc49fd76be",
-        ]
 
-        c = self.h._retrieve_content(self.h, self.mask, msg, self.chan)
-        self.assertEqual(4, len(c))
+        klass = Imgur(msg)
+        klass.get_content()
+        self.assertEquals(4, klass.items)
+        for i, m in enumerate(klass):
+            d = self.test_dict[i]
+            [self.assertEquals(v, m[k]) for k, v in d.items()]
 
-        for c_hash in c:
-            md5 = hashlib.md5()
-            md5.update(c_hash['content'])
-            self.assertTrue(md5.hexdigest() in hashes)
+    def test_path_a(self):
+        msg = "https://imgur.com/a/Tkx0P"
+        klass = Imgur(msg)
+        self.assertEquals(
+            klass.return_path(), join('imgur', 'a', 'Tkx0P'))
+
+
+class ImgurTestGallery(unittest.TestCase):
+    def setUp(self):
+
+        self.test_dict = [{
+            'collection': 'P7u9z',
+            'content_id': 'aFDjukM',
+            'content_url': 'https://i.imgur.com/aFDjukM.png',
+            'content_hash': 'b7caefeae792415b4570e5d0b6b633ea',
+        }, {
+            'collection': 'P7u9z',
+            'content_id': 'GDnuadf',
+            'content_url': 'https://i.imgur.com/GDnuadf.png',
+            'content_hash': 'e52bf7e50b68ecbdb2d34ec0f2bae9b2',
+        }, {
+            'collection': 'P7u9z',
+            'content_id': 'EUEJqpi',
+            'content_url': 'https://i.imgur.com/EUEJqpi.png',
+            'content_hash': '14f7a5f391340444bfca381bcbfe0391',
+        }, {
+            'collection': 'P7u9z',
+            'content_id': 'tksJuZE',
+            'content_url': 'https://i.imgur.com/tksJuZE.png',
+            'content_hash': '940c32679c4b8d0f9144283dde90611e',
+        }, {
+        }]
 
     def test_fetch_imgur_gallery(self):
         msg = "https://imgur.com/gallery/P7u9z"
-        hashes = [
-            "b7caefeae792415b4570e5d0b6b633ea",
-            "e52bf7e50b68ecbdb2d34ec0f2bae9b2",
-            "14f7a5f391340444bfca381bcbfe0391",
-            "940c32679c4b8d0f9144283dde90611e",
-        ]
 
-        c = self.h._retrieve_content(self.h, self.mask, msg, self.chan)
-        self.assertEqual(4, len(c))
-
-        for c_hash in c:
-            md5 = hashlib.md5()
-            md5.update(c_hash['content'])
-            self.assertTrue(md5.hexdigest() in hashes)
+        klass = Imgur(msg)
+        klass.get_content()
+        self.assertEquals(4, klass.items)
+        for i, m in enumerate(klass):
+            d = self.test_dict[i]
+            [self.assertEquals(v, m[k]) for k, v in d.items()]
 
     def test_fetch_imgur_gallery_contaminated(self):
         msg = "https://imgur.com/gallery/P7u9z,"
-        hashes = [
-            "b7caefeae792415b4570e5d0b6b633ea",
-            "e52bf7e50b68ecbdb2d34ec0f2bae9b2",
-            "14f7a5f391340444bfca381bcbfe0391",
-            "940c32679c4b8d0f9144283dde90611e",
-        ]
 
-        c = self.h._retrieve_content(self.h, self.mask, msg, self.chan)
-        self.assertEqual(4, len(c))
-
-        for c_hash in c:
-            md5 = hashlib.md5()
-            md5.update(c_hash['content'])
-            self.assertTrue(md5.hexdigest() in hashes)
+        klass = Imgur(msg)
+        klass.get_content()
+        self.assertEquals(4, klass.items)
+        for i, m in enumerate(klass):
+            d = self.test_dict[i]
+            [self.assertEquals(v, m[k]) for k, v in d.items()]
 
     def test_fetch_imgur_long_gallery(self):
         msg = "https://imgur.com/gallery/UhcNd"
@@ -146,25 +224,35 @@ class ImgurTest(unittest.TestCase):
         hashes = [x.strip().split(" ") for x in hashes.split("\n") if x]
         hashes = [x for x in sum(hashes, []) if x]
 
-        c = self.h._retrieve_content(self.h, self.mask, msg, self.chan)
+        klass = Imgur(msg)
+        klass.get_content()
 
-        self.assertEqual(58, len(c))
-
-       	for c_hash in c:
-            md5 = hashlib.md5()
-            md5.update(c_hash['content'])
-            self.assertTrue(md5.hexdigest() in hashes)
+        self.assertEquals(58, klass.items)
+        for i, m in enumerate(klass):
+            [self.assertEquals(hashes[i], m['content_hash'])]
 
     def test_fetch_imgur_gallery_single_entry(self):  # yes that happens
+        test_dict = [{
+            'collection': '3kMJEDV',
+            'content_id': '3kMJEDV',
+            'content_url': 'https://i.imgur.com/3kMJEDV.jpg',
+            'content_hash': '0334557ddbb9d909a3e31bd9070e90f7',
+        }]
+
         msg = "https://imgur.com/gallery/3kMJEDV"
-        h = '0334557ddbb9d909a3e31bd9070e90f7'
 
-        c = self.h._retrieve_content(self.h, self.mask, msg, self.chan)
-        self.assertEqual(1, len(c))
+        klass = Imgur(msg)
+        klass.get_content()
+        self.assertEquals(1, klass.items)
+        for i, m in enumerate(klass):
+            d = test_dict[i]
+            [self.assertEquals(v, m[k]) for k, v in d.items()]
 
-        md5 = hashlib.md5()
-        md5.update(c[0]['content'])
-        self.assertTrue(md5.hexdigest() == h)
+    def test_path_gallery(self):
+        msg = "https://imgur.com/gallery/3kMJEDV"
+        klass = Imgur(msg)
+        self.assertEquals(
+            klass.return_path(), join('imgur', 'gallery', '3kMJEDV'))
 
 if __name__ == '__main__':
     unittest.main()

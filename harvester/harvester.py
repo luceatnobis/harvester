@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import re
 import pdb
 import irc3
@@ -9,6 +11,8 @@ from os.path import join
 
 from irc3.plugins.command import command
 from harvester.settings import HarvesterSettings
+
+from harvester import utils
 from harvester.utils import urlReg, save
 
 
@@ -32,23 +36,11 @@ class HarvesterBot(HarvesterSettings):
 
         self.bot.SIGINT = custom_quit
         
-        for k, v in self.bot.config.items():
-            if not k.startswith('py'):
-                continue
-            setattr(self, k[3:], v)
-
-        self._create_paths()
-        
-        # TODO: check paths with db object potentially
-        # self.db = sqlite3.connect(join(self.archive_path, self.db_name))
+        self.paths = utils.PathHelper(config)
+        self.db = db.HarvesterDB(self.paths)
 
     def _cleanup(self):
-        print("Still cleaning up")
-        return True
-
-    def _create_paths(self):
-        for f in filter(lambda x: x.startswith('path'), vars(self)):
-            makedirs(getattr(self, f), exist_ok=True)
+        pass
 
     #NOTE: https://irc3.readthedocs.org/en/latest/rfc.html
     @irc3.event(irc3.rfc.PRIVMSG)

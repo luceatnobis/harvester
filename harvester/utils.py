@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-# -+- coding: utf-8 -*-
+
 import re
+import pdb
 import json
 import hashlib
 
@@ -9,11 +10,33 @@ from os import path, makedirs, SEEK_CUR
 from harvester import libDataBs
 
 
+class PathHelper:
+    def __init__(self, config):
+        for k, v in config.items():
+            if not k.startswith('py'):
+                continue
+            setattr(self, k[3:], v)
+
+        assert set(filter(lambda x: x.startswith('path'), vars(self).keys()))\
+            == set(('path_bot_home', 'path_storage', 'path_log'))
+
+        for f in filter(lambda x: x.startswith('path'), vars(self)):
+            makedirs(getattr(self, f), exist_ok=True)
+
+
+class RowObj:  # helper class to turn sqlite3 row into object
+    def __init__(self, *args, **kwargs):
+        for k, v in kwargs.items():
+            setattr(self, k, v)
+
+
+# obsolete
 def getOrCreatePath(archive_base_path):
     if not path.exists(archive_base_path):
         makedirs(archive_base_path)
 
 
+# obsolete
 def setUpDir(site, archive_base_path):
     """Prepare directory and json path for download."""
     archive_json = path.join(archive_base_path, "archive.json")
@@ -22,6 +45,7 @@ def setUpDir(site, archive_base_path):
     return final_dir, archive_json
 
 
+# also obsolete
 def appendToJson(data, file):
     """Append data to the end of json list without parsing it."""
     with open(file, "ab+") as fj:
