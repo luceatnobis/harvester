@@ -6,6 +6,7 @@ import tempfile
 import unittest
 
 from shutil import rmtree
+from datetime import datetime
 from os.path import exists, join
 
 from harvester.plugins import *
@@ -19,11 +20,13 @@ class ContentArchiveBase(unittest.TestCase):
         self.paths = PathHelper(self.tempdir, ':memory:')
         self.db = HarvesterDB(self.paths)
 
-    def _retrieve_all_rows(self):
-        return self.db.cursor.execute("SELECT * FROM Harvester").fetchall()
+    def _retrieve_all_rows(self, tbl="Harvester"):
+        return self.db.cursor.execute(
+            "SELECT * FROM {tbl}".format(tbl=tbl)).fetchall()
 
     def tearDown(self):
         rmtree(self.tempdir)
+
 
 class ImgurArchiveTest(ContentArchiveBase):
 
@@ -36,18 +39,30 @@ class ImgurArchiveTest(ContentArchiveBase):
 
     def test_imgur_single_archive(self):
         klass = imgur.Imgur(self.single)
+
+        now = datetime.now()
+        klass.archival_timestamp = now
         self.db.process_content(klass)
+        fname = join(
+            self.paths.path_storage, '.content', '{ts}.jpg'.format(
+                ts=str(int(now.timestamp()))
+            )
+        )
+        self.assertTrue(exists(fname))
 
-        rows = self._retrieve_all_rows()
-        self.assertEquals(len(rows), 1)
+        harv_rows = self._retrieve_all_rows()
+        coll_rows = self._retrieve_all_rows("Collections")
+        self.assertEquals(len(harv_rows), 1)
 
-        row = rows[0]
-        self.assertEquals(row.collection_id, None)
-        self.assertEquals(row.content_id, "e1yYXUU")
+        row = harv_rows[0]
+        self.assertEquals(row.content_id, 'e1yYXUU')
         self.assertEquals(row.content_hash, self.single_hash)
 
-        self.assertTrue(
-            exists(join(self.paths.path_storage, "imgur", "e1yYXUU.jpg")))
+        row = coll_rows[0]
+        self.assertIsNone(row.collection_id)
+        self.assertEquals(row.site, 'imgur')
+        self.assertEquals(row.archived_at, now)
+        self.assertEquals(row.content_id, 'e1yYXUU')
 
     def test_imgur_single_duplicate(self):
         klass = imgur.Imgur(self.single)
@@ -60,7 +75,6 @@ class ImgurArchiveTest(ContentArchiveBase):
         self.assertEquals(len(rows), 1)
 
         row = rows[0]
-        self.assertEquals(row.collection_id, None)
         self.assertEquals(row.content_id, "e1yYXUU")
         self.assertEquals(row.content_hash, self.single_hash)
 
@@ -68,7 +82,6 @@ class ImgurArchiveTest(ContentArchiveBase):
     def test_imgur_gallery(self):
         klass = imgur.Imgur(self.gallery)
         self.db.process_content(klass)
-
 
     def test_imgur_gallery_duplicate(self):
         klass = imgur.Imgur(self.gallery)

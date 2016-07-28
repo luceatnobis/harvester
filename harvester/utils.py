@@ -29,6 +29,13 @@ class RowObj:  # helper class to turn sqlite3 row into object
         for k, v in kwargs.items():
             setattr(self, k, v)
 
+    def __repr__(self):
+        return ", ".join(
+            "{k}: {v}".format(k=k, v=v) for k, v in [
+                (f, getattr(self, f)) for f in dir(self)
+                if not f.startswith("_")
+            ]
+        )
 
 # obsolete
 def getOrCreatePath(archive_base_path):

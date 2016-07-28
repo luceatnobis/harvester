@@ -12,7 +12,7 @@ class ImgurTestSingle(unittest.TestCase):
 
     def setUp(self):
         self.test_dict = [{
-            'collection': None,
+            'collection_id': None,
             'content_id': 'e1yYXUU',
             'content_url': 'https://i.imgur.com/e1yYXUU.jpg',
             'content_hash': 'c2002691d4cd350aca016a982983ce0a',
@@ -46,24 +46,24 @@ class ImgurTestSingle(unittest.TestCase):
     def test_path_single(self):
         msg = "https://imgur.com/e1yYXUU"
         klass = Imgur(msg)
-        self.assertEquals(klass.return_path(), 'imgur')
+        self.assertEquals(klass.return_path(), join('imgur', 'single'))
         
 
 class ImgurTestComma(unittest.TestCase):
 
     def test_fetch_imgur_share_comma(self):
         test_dict = [{
-            'collection': None,
+            'collection_id': None,
             'content_id': 'yK2C3KZ',
             'content_url': 'https://i.imgur.com/yK2C3KZ.png',
             'content_hash': 'b1867f10a1c3fb93b3280515b202d0ac',
         }, {
-            'collection': None,
+            'collection_id': None,
             'content_id': 'qn3HVUT',
             'content_url': 'https://i.imgur.com/qn3HVUT.jpg',
             'content_hash': '859be87b32d4eefdcbef391bb63faee5',
         }, {
-            'collection': None,
+            'collection_id': None,
             'content_id': 'GfbYRhJ',
             'content_url': 'https://i.imgur.com/GfbYRhJ.png',
             'content_hash': '5b2463266f958a5041cde08c594a040f',
@@ -82,7 +82,7 @@ class ImgurTestComma(unittest.TestCase):
     def test_path_comma(self):
         msg = "https://imgur.com/yK2C3KZ,qn3HVUT,GfbYRhJ"
         klass = Imgur(msg)
-        self.assertEquals(klass.return_path(), 'imgur')
+        self.assertEquals(klass.return_path(), join('imgur', 'single'))
 
 
 class ImgurTestA(unittest.TestCase):
@@ -90,25 +90,25 @@ class ImgurTestA(unittest.TestCase):
     def setUp(self):
         self.test_dict = [{
             'site': 'imgur',
-            'collection': 'Tkx0P',
+            'collection_id': 'Tkx0P',
             'content_id': 'HMk3d7r',
             'content_url': 'https://i.imgur.com/HMk3d7r.png',
             'content_hash': '037c2962e627cdfd347528445e383cd7',
         }, {
             'site': 'imgur',
-            'collection': 'Tkx0P',
+            'collection_id': 'Tkx0P',
             'content_id': 'Mq3eWP5',
             'content_url': 'https://i.imgur.com/Mq3eWP5.png',
             'content_hash': '98a6b2f27d27d712ff430ac980cbfb48',
         }, {
             'site': 'imgur',
-            'collection': 'Tkx0P',
+            'collection_id': 'Tkx0P',
             'content_id': 'WK8jjDp',
             'content_url': 'https://i.imgur.com/WK8jjDp.png',
             'content_hash': '8a4a37f78a1a3e593a61ab231ce93ed7',
         }, {
             'site': 'imgur',
-            'collection': 'Tkx0P',
+            'collection_id': 'Tkx0P',
             'content_id': 'HFXxTMp',
             'content_url': 'https://i.imgur.com/HFXxTMp.png',
             'content_hash': 'c63ff1c939582db2023dd7bc49fd76be',
@@ -146,22 +146,22 @@ class ImgurTestGallery(unittest.TestCase):
     def setUp(self):
 
         self.test_dict = [{
-            'collection': 'P7u9z',
+            'collection_id': 'P7u9z',
             'content_id': 'aFDjukM',
             'content_url': 'https://i.imgur.com/aFDjukM.png',
             'content_hash': 'b7caefeae792415b4570e5d0b6b633ea',
         }, {
-            'collection': 'P7u9z',
+            'collection_id': 'P7u9z',
             'content_id': 'GDnuadf',
             'content_url': 'https://i.imgur.com/GDnuadf.png',
             'content_hash': 'e52bf7e50b68ecbdb2d34ec0f2bae9b2',
         }, {
-            'collection': 'P7u9z',
+            'collection_id': 'P7u9z',
             'content_id': 'EUEJqpi',
             'content_url': 'https://i.imgur.com/EUEJqpi.png',
             'content_hash': '14f7a5f391340444bfca381bcbfe0391',
         }, {
-            'collection': 'P7u9z',
+            'collection_id': 'P7u9z',
             'content_id': 'tksJuZE',
             'content_url': 'https://i.imgur.com/tksJuZE.png',
             'content_hash': '940c32679c4b8d0f9144283dde90611e',
@@ -233,7 +233,7 @@ class ImgurTestGallery(unittest.TestCase):
 
     def test_fetch_imgur_gallery_single_entry(self):  # yes that happens
         test_dict = [{
-            'collection': '3kMJEDV',
+            'collection_id': '3kMJEDV',
             'content_id': '3kMJEDV',
             'content_url': 'https://i.imgur.com/3kMJEDV.jpg',
             'content_hash': '0334557ddbb9d909a3e31bd9070e90f7',

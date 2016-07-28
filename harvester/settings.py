@@ -12,7 +12,7 @@ from harvester import mixtape
 from harvester import sprunge
 from harvester import prntscrn
 from harvester import hastebin
-from harvester import pastebin
+# from harvester import pastebin
 from harvester.plugins import cubeupload
 
 
@@ -37,7 +37,7 @@ class HarvesterSettings(Settings):
     '''
 
     service_regex_dict = {
-        "^https?://pastebin\.com/((raw\.php\?i=)|(raw/))?[A-Za-z0-9]+": pastebin.get_content,
+        # "^https?://pastebin\.com/((raw\.php\?i=)|(raw/))?[A-Za-z0-9]+": pastebin.get_content,
         # those are unfortunately dead :( RIP
         # '^https?://p\.pomf\.se/[\d.]+': ppomf.get_content,
         # '^https?://(?:infotomb\.com|itmb\.co)/[0-9a-zA-Z.]+': infotomb.get_content,
