@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -+- coding: utf-8 -*-
 
 import pdb
 import irc3
@@ -30,6 +29,7 @@ if __name__ == "__main__":
     for p in plugins:
         bot.include(p)
 
+    pdb.set_trace()
     bot.run()
 
 

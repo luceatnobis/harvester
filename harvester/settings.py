@@ -9,9 +9,9 @@ from harvester import anonmgr
 from harvester import anonyws
 from harvester import mixtape
 # from harvester import postimg
-from harvester import sprunge
+# from harvester import sprunge
 from harvester import prntscrn
-from harvester import hastebin
+# from harvester import hastebin
 # from harvester import pastebin
 from harvester.plugins import cubeupload
 
@@ -45,9 +45,9 @@ class HarvesterSettings(Settings):
         # dpaste doesnt get along with https, so we're not gonna bother
         '^http://dpaste\.com/[0-9a-zA-Z]+(.txt)?': dpaste.get_content,
         '^https?://bpaste\.net/(raw|show)/[0-9a-zA-Z]+': bpaste.get_content,
-        '^https?://hastebin.com/([a-z]+(\.[a-z]+)|(raw/[a-z]+)|([a-z]+))': hastebin.get_content,
+        # '^https?://hastebin.com/([a-z]+(\.[a-z]+)|(raw/[a-z]+)|([a-z]+))': hastebin.get_content,
         # '^https?://github.com/(.+)': github.get_content,
-        '^http?://sprunge\.us/[a-zA-Z0-9.]{4,7}': sprunge.get_content,
+        # '^http?://sprunge\.us/[a-zA-Z0-9.]{4,7}': sprunge.get_content,
         # here come the image hosters
         '^https?://anony\.ws/(.+)': anonyws.get_content,
         '^https?://puu\.sh/[A-Za-z0-9]{5}/(.+)': puush.get_content,

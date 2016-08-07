@@ -3,9 +3,9 @@
 import pdb
 import unittest
 
-from os.path import join
-
 from harvester.plugins.imgur import Imgur
+
+from harvester.utils import CustomPath as Path
 
 
 class ImgurTestSingle(unittest.TestCase):
@@ -46,8 +46,8 @@ class ImgurTestSingle(unittest.TestCase):
     def test_path_single(self):
         msg = "https://imgur.com/e1yYXUU"
         klass = Imgur(msg)
-        self.assertEquals(klass.return_path(), join('imgur', 'single'))
-        
+        self.assertEquals(klass.return_path(), Path('imgur', 'single'))
+
 
 class ImgurTestComma(unittest.TestCase):
 
@@ -82,7 +82,8 @@ class ImgurTestComma(unittest.TestCase):
     def test_path_comma(self):
         msg = "https://imgur.com/yK2C3KZ,qn3HVUT,GfbYRhJ"
         klass = Imgur(msg)
-        self.assertEquals(klass.return_path(), join('imgur', 'single'))
+        # self.assertEquals(klass.return_path(), join('imgur', 'single'))
+        self.assertEquals(klass.return_path(), Path('imgur', 'single'))
 
 
 class ImgurTestA(unittest.TestCase):
@@ -139,12 +140,12 @@ class ImgurTestA(unittest.TestCase):
         msg = "https://imgur.com/a/Tkx0P"
         klass = Imgur(msg)
         self.assertEquals(
-            klass.return_path(), join('imgur', 'a', 'Tkx0P'))
+            klass.return_path(), Path('imgur', 'a', 'Tkx0P'))
 
 
 class ImgurTestGallery(unittest.TestCase):
-    def setUp(self):
 
+    def setUp(self):
         self.test_dict = [{
             'collection_id': 'P7u9z',
             'content_id': 'aFDjukM',
@@ -252,7 +253,34 @@ class ImgurTestGallery(unittest.TestCase):
         msg = "https://imgur.com/gallery/3kMJEDV"
         klass = Imgur(msg)
         self.assertEquals(
-            klass.return_path(), join('imgur', 'gallery', '3kMJEDV'))
+            klass.return_path(), Path('imgur', 'gallery', '3kMJEDV'))
+
+
+class ImgurTest404(unittest.TestCase):
+
+    def test_404_single(self):
+        msg = "https://imgur.com/thisisinvalid"
+        klass = Imgur(msg)
+        self.assertTrue(klass.empty)
+        self.assertEquals(klass.items, 0)
+        self.assertEquals(len(list(klass)), 0)  # to test __iter__
+
+        self.assertEquals(len(klass.failure_ids), 1)
+        self.assertEquals(klass.failure_ids[0], 'thisisinvalid')
+
+    def test_404_a(self):
+        msg = "https://imgur.com/a/thisisinvalid"
+        klass = Imgur(msg)
+        self.assertTrue(klass.empty)
+        self.assertEquals(klass.items, 0)
+        self.assertEquals(len(list(klass)), 0)
+
+    def test_404_gallery(self):
+        msg = "https://imgur.com/gallery/thisisinvalid"
+        klass = Imgur(msg)
+        self.assertTrue(klass.empty)
+        self.assertEquals(klass.items, 0)
+        self.assertEquals(len(list(klass)), 0)
 
 if __name__ == '__main__':
     unittest.main()

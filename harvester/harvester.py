@@ -7,13 +7,13 @@ import time
 import sqlite3
 
 from os import makedirs
-from os.path import join
+# from os.path import join
 
 from irc3.plugins.command import command
 from harvester.settings import HarvesterSettings
 
-from harvester import utils
-from harvester.utils import urlReg, save
+from harvester.db import HarvesterDB
+from harvester.utils import urlReg, save, PathHelper, CustomPath as Path
 
 
 @irc3.plugin
@@ -36,8 +36,9 @@ class HarvesterBot(HarvesterSettings):
 
         self.bot.SIGINT = custom_quit
         
-        self.paths = utils.PathHelper(config)
-        self.db = db.HarvesterDB(self.paths)
+        self.paths = PathHelper(self.bot.config)
+        # self.db = db.HarvesterDB(self.paths)
+        self.db = HarvesterDB(self.paths)
 
     def _cleanup(self):
         pass
@@ -83,11 +84,16 @@ class HarvesterBot(HarvesterSettings):
         r' NOTICE (?P<nick>harvester) :This nickname is registered.*'
     )
     def register(self, ns=None, nick=None, **kw):
+        """
         np_path = os.path.join(
             os.environ['HOME'], '.harvester', 'nickserv_pass')
+        """
+        np_path = Path(os.environ['HOME'], '.harvester', 'nickserv_pass')
 
-        with open(np_path) as f:
+        # with open(np_path) as f:
+        with np_path.open() as f:
             p = f.read().rstrip()
+
         self.bot.privmsg(ns, 'identify %s %s' % (nick, p))
 
     def harvest(self, mask, msg, chan):

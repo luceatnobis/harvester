@@ -6,10 +6,9 @@ import sqlite3
 import unittest
 import tempfile
 
-from os.path import exists, join
-
 from harvester.db import HarvesterDB
 from harvester import plugins
+from harvester.utils import CustomPath as Path
 from harvester.tests.testutils import PathTestHelper as PathHelper
 
 
@@ -19,8 +18,6 @@ class BaseDBTest(unittest.TestCase):
         self.test_tb = 'testtb'
         self.testfile_name = 'ayy.lmao'
         self.tempdir = tempfile.mkdtemp()
-
-        # HarvesterDB.tb_names = ['', 'CollTest']
 
     def _list_tables(self, db=None):
         if db is None:
@@ -72,7 +69,7 @@ class PhysicalDBTest(BaseDBTest):
             self.assertEquals(set(columns), set(HarvesterDB.fields[table]))
 
     def test_db_validate_valid_db(self):
-        local_db = sqlite3.connect(self.paths.db_path)
+        local_db = sqlite3.connect(str(self.paths.db_path))
         for table in HarvesterDB.tb_names:
             s = (  # constructs the valid query string from fields
                 "CREATE TABLE {tbname} (%s)" % ", ".join(
@@ -87,7 +84,7 @@ class PhysicalDBTest(BaseDBTest):
 
     def test_db_validate_invalid_db(self):
         for t in HarvesterDB.tb_names:
-            local_db = sqlite3.connect(self.paths.db_path)
+            local_db = sqlite3.connect(str(self.paths.db_path))
 
             self._create_table(
                 t, {"lolwhat": "TEXT", "haha": "TIMESTAMP"}, local_db)
@@ -119,10 +116,11 @@ class MemoryDBTest(BaseDBTest):
         self.db = HarvesterDB(self.paths)
 
         for p in plugins.__all__:
-            self.assertTrue(exists(join(self.paths.path_storage, p)))
+            p = Path(self.paths.path_storage, p)
+            self.assertTrue(p.is_dir())
 
-        self.assertTrue(
-            exists(join(self.paths.path_storage, HarvesterDB.content_frag)))
+        self.assertTrue(Path(
+            self.paths.path_storage, HarvesterDB.content_frag).exists())
 
 if __name__ == '__main__':
     unittest.main()

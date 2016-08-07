@@ -5,29 +5,57 @@ import pdb
 import json
 import hashlib
 
+from pathlib import Path
+from functools import reduce
+from operator import truediv
+
 from os import path, makedirs, SEEK_CUR
 
 from harvester import libDataBs
 
 
+class CustomPath:
+
+    def __new__(self, *args):
+        if not args:
+            return Path()
+        return reduce(truediv, (Path(arg) for arg in args))
+
+
 class PathHelper:
     def __init__(self, config):
+        self._paths = dict()
         for k, v in config.items():
             if not k.startswith('py'):
                 continue
-            setattr(self, k[3:], v)
+            p = Path(v)
+            self._paths[v] = p
+            setattr(self, k[3:], p)
 
         assert set(filter(lambda x: x.startswith('path'), vars(self).keys()))\
-            == set(('path_bot_home', 'path_storage', 'path_log'))
+            == {'path_bot_home', 'path_storage', 'path_log'}
 
-        for f in filter(lambda x: x.startswith('path'), vars(self)):
-            makedirs(getattr(self, f), exist_ok=True)
+        for f in filter(lambda x: str(x).startswith('path'), vars(self)):
+            f = getattr(self, f)
+            if not f.is_dir():
+                f.mkdir()
 
 
 class RowObj:  # helper class to turn sqlite3 row into object
     def __init__(self, *args, **kwargs):
+        self._fields = list()
         for k, v in kwargs.items():
             setattr(self, k, v)
+            self._fields.append(k)
+
+    def __eq__(self, other):
+        keys = other.keys()
+        for f in self._fields:
+            if f in keys and getattr(self, f) == other[f]:
+                continue
+            return False
+        return True
+
 
     def __repr__(self):
         return ", ".join(

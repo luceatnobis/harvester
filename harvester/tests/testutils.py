@@ -7,7 +7,7 @@ import shutil
 from os.path import join
 
 from harvester.utils import PathHelper
-from harvester.harvester import HarvesterBot
+# from harvester.harvester import HarvesterBot
 
 
 class PathTestHelper(PathHelper):

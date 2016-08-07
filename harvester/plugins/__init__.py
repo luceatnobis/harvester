@@ -1,13 +1,16 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.5
 
+import pdb
 import hashlib
 import datetime
 import grequests
 
-from itertools import zip_longest as zip
+from itertools import count
 from collections import OrderedDict
 
 from pytz import timezone
+
+from harvester.utils import CustomPath as Path
 
 __all__ = ["imgur", "pastebin"]
 
@@ -15,13 +18,18 @@ __all__ = ["imgur", "pastebin"]
 class PluginBase:
 
     def __init__(self):
+        self.empty = False
         self.collected = False
-        self.collection = None 
-        self.collection_id = None 
+        self.collection = None
+        self.collection_id = None
         self.collection_title = None
-        self.archival_timestamp = datetime.datetime.now()
+        self.archival_timestamp = datetime.datetime.now(timezone('utc'))
 
         self.hashes = list()
+        self.contents = list()
+
+        self.exceptions = list()
+        self.failure_ids = list()
 
     def _chunks(self, l, n=50):
         for i in range(0, len(l), n):
@@ -38,35 +46,57 @@ class PluginBase:
 
         responses.sort(key=lambda x: self.content_urls.index(x.url))
 
-        self.contents = [x.content for x in responses]
-        self.hashes = [self._hash(x.content) for x in responses]
+        """
+        for r in responses:
+            c = r.content
+            if 'text/plain' in r.headers.get('content-type', ""):
+                c = c.replace(b"\r\n", b"\n")
+            self.contents.append(c)
+        """
 
+        self.contents = [r.content for r in responses]
+        self.hashes = [self._hash(x) for x in self.contents]
         return self._post_get_content(responses)
 
     def _post_get_content(self, responses):
         pass
 
+    def return_path(self):
+        return Path(self.site)
+
+    def _empty_handler(self):
+        self.items = 0
+        self.empty = True
+        self.failure_ids = [self.id_list]
+        return
+
     def __iter__(s):
+
+        if s.empty:
+            return list()
 
         if not s.collected:
             s.get_content()
 
-        for d, e, cu, t, ct, f, h, c in zip(
-            s.id_list, s.ext_list, s.content_urls, s.titles,
-            s.timestamps, s.original_filenames, s.hashes, s.contents
-        ):
+        if s.empty:  # sometimes we need to know before and after collecting
+            return list()  # though i should probably find a way to avoid that
 
+        for d, e, cu, t, ct, f, h, c, i in zip(
+            s.id_list, s.ext_list, s.content_urls, s.titles,
+            s.timestamps, s.content_filenames, s.hashes, s.contents, count(1)
+        ):
             yield ContentObj(**{
                 'site': s.site,
                 'content_id': d,
                 'content_url': cu,
                 'content_hash': h,
                 'content_title': t,
-                'content_timestamp': ct,
+                'content_timestamp': int(ct.timestamp()),
+                'content_filename': f,
+                'content_extension': e,
+                'content_index': i,
                 'original_url': s.original_url,
-                'original_filename': f,
-                'original_extension': e,
-                'archived_at': s.archival_timestamp,
+                'archived_at': int(s.archival_timestamp.timestamp()),
                 'collection': s.collection,
                 'collection_id': s.collection_id,
                 'collection_title': s.collection_title,
@@ -75,11 +105,12 @@ class PluginBase:
 
 
 class ContentObj(OrderedDict):
+
     field_order = (
         'site', 'content_id', 'content_url', 'content_hash', 'content_title',
-        'content_timestamp', 'original_url', 'original_filename',
-        'original_filename','original_extension', 'archived_at',
-        'collection', 'collection_id', 'collection_title'
+        'content_timestamp', 'content_filename', 'content_extension',
+        'content_index', 'original_url', 'archived_at', 'collection',
+        'collection_id', 'collection_title',
     )
     non_dict = ('content', )
 
@@ -94,5 +125,5 @@ class ContentObj(OrderedDict):
             setattr(self, f, kwargs.get(f))
 
     def __repr__(self):
-        return '{' + ", ".join("{k}: {v}".format(k=k, v=v) for k, v in [(f,
-            self.get(f)) for f in self.field_order]) + '}'
+        return '{' + ", ".join("{k}: {v}".format(k=k, v=v) for k, v in [
+            (f, self.get(f)) for f in self.field_order]) + '}'

@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 
 import shutil
 import tempfile
@@ -31,9 +30,9 @@ class PathTest(unittest.TestCase):
             filter(lambda x: x.startswith('path'), vars(self.path)))
 
         self.assertEquals(len(path_vars), 3)
-        self.assertTrue(exists(self.path.path_bot_home))
-        self.assertTrue(exists(self.path.path_storage))
-        self.assertTrue(exists(self.path.path_log))
+        self.assertTrue(self.path.path_bot_home.is_dir())
+        self.assertTrue(self.path.path_storage.is_dir())
+        self.assertTrue(self.path.path_log.is_dir())
 
     def tearDown(self):
         shutil.rmtree(self.tmp_archive_dir)
