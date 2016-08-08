@@ -40,6 +40,7 @@ class HarvesterSettings(Settings):
         # '^https?://p\.pomf\.se/[\d.]+': ppomf.get_content,
         # '^https?://(?:infotomb\.com|itmb\.co)/[0-9a-zA-Z.]+': infotomb.get_content,
         '^https?://prntscr\.com/[0-9a-zA-Z]+': prntscrn.get_content,
+        '^https?://prnt.sc/[0-9a-zA-Z]+': prntscrn.get_content,
         # dpaste doesnt get along with https, so we're not gonna bother
         '^http://dpaste\.com/[0-9a-zA-Z]+(.txt)?': dpaste.get_content,
         '^https?://bpaste\.net/(raw|show)/[0-9a-zA-Z]+': bpaste.get_content,

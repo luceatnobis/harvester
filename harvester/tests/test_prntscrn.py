@@ -35,6 +35,15 @@ class PastebinTest(unittest.TestCase):
         md5.update(c[0]['content'])
         self.assertEqual(md5.hexdigest(), test_hash)
 
+    def test_fetch_prntscrn_short_url(self):
+        msg = "http://prnt.sc/c35svb"
+
+        c = self.h._retrieve_content(self.h, self.mask, msg, self.chan)
+        test_hash = "efe2c9fe8c8f4765b0ce68087e134e67"
+
+        md5 = hashlib.md5()
+        md5.update(c[0]['content'])
+        self.assertEqual(md5.hexdigest(), test_hash)
 
 if __name__ == '__main__':
     unittest.main()
